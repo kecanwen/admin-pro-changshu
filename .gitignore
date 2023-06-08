@@ -47,3 +47,9 @@ src/vab/styles/themes/red.scss
 /src/vab/styles/themes/red-black.scss
 /src/vab/styles/themes/red-white.scss
 /.history
+.svn/pristine/ff/fff48a8ae8d2c125091d84d3f757bd705febe091.svn-base
+*.svn-base
+*.db-journal
+*.db
+.svn/format
+.svn/entries

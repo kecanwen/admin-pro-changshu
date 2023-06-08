@@ -78,11 +78,12 @@
       append-to-body
       title="新建收货单明细"
       :visible.sync="innerVisible.innerAddVisible"
-      width="50%"
+      width="60%"
     >
       <el-form
         ref="addForm"
-        label-width="100px"
+        :inline="true"
+        label-width="140px"
         :model="addForm"
         :rules="addRules"
       >
@@ -111,11 +112,19 @@
           />
         </el-form-item>
         <el-form-item label="批次号：" prop="batchNo">
-          <el-input
-            v-model="addForm.batchNo"
-            class="inline-input"
-            style="width: 180px"
-          />
+          <el-input v-model="addForm.batchNo" class="inline-input" />
+        </el-form-item>
+        <el-form-item label="单包重量：" prop="singleWeight">
+          <el-input v-model="addForm.singleWeight" class="inline-input" />
+        </el-form-item>
+        <el-form-item label="生产日期：" prop="produceDate">
+          <el-input v-model="addForm.produceDate" class="inline-input" />
+        </el-form-item>
+        <el-form-item label="有效期：" prop="validityDate">
+          <el-input v-model="addForm.validityDate" class="inline-input" />
+        </el-form-item>
+        <el-form-item label="尺寸：" prop="size">
+          <el-input v-model="addForm.size" class="inline-input" />
         </el-form-item>
         <el-form-item label="收货数量：" prop="number">
           <el-input-number
@@ -130,7 +139,6 @@
             v-model.trim="addForm.inTime"
             class="inline-input"
             disabled
-            style="width: 180px"
           />
         </el-form-item>
         <el-form-item label="收货时间：" prop="inTime">
@@ -138,7 +146,6 @@
             v-model.trim="addForm.recivedTime"
             class="inline-input"
             disabled
-            style="width: 180px"
           />
         </el-form-item>
       </el-form>
@@ -208,9 +215,9 @@
           ReceiveType: [
             { required: true, trigger: 'blur', message: '请选择单据类型' },
           ],
-          Supplier: [
-            { required: true, trigger: 'blur', message: '请选择供应商' },
-          ],
+          // Supplier: [
+          //   { required: true, trigger: 'blur', message: '请选择供应商' },
+          // ],
         },
         title: '',
         dialogFormVisible: false,

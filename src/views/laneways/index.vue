@@ -23,6 +23,7 @@
       v-loading="listLoading"
       border
       :data="list"
+      :row-style="tableRowStyle"
       @selection-change="setSelectRows"
     >
       <el-table-column align="center" show-overflow-tooltip type="selection" />
@@ -50,7 +51,16 @@
         width="150"
       >
         <template #default="{ row }">
-          <el-button type="text" @click="handleEdit(row)">清除故障</el-button>
+          <el-button
+            v-if="!row.HasDeviceError"
+            type="text"
+            @click="handleEdit(row, 1)"
+          >
+            标记故障
+          </el-button>
+          <el-button v-else type="text" @click="handleEdit(row, 0)">
+            清除故障
+          </el-button>
         </template>
       </el-table-column>
       <template #empty>
@@ -95,6 +105,14 @@
       this.fetchData()
     },
     methods: {
+      tableRowStyle({ row }) {
+        let { HasDeviceError } = row
+        if (HasDeviceError) {
+          return { background: '#f08383' }
+        } else {
+          return {}
+        }
+      },
       setSelectRows(val) {
         this.selectRows = val
       },
@@ -106,6 +124,9 @@
         this.queryForm.pageNo = val
         this.fetchData()
       },
+      clearData() {},
+      tagData() {},
+      clearOrTagData() {},
       queryData() {
         this.queryForm.pageNo = 1
         this.fetchData()
@@ -119,10 +140,10 @@
         this.total = total
         this.listLoading = false
       },
-      handleEdit(row) {
+      handleEdit(row, type) {
         if (row.Id) {
           this.$baseConfirm('你确定要操作当前项吗', null, async () => {
-            const { msg } = await doEdit({ ids: row.Id })
+            const { msg } = await doEdit({ ids: row.Id, type })
             this.$baseMessage(msg, 'success', 'vab-hey-message-success')
             await this.fetchData()
           })

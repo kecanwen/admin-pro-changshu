@@ -57,6 +57,23 @@
               label="物料名称"
               prop="materialsName"
             />
+            <el-table-column align="center" label="批次号" prop="batchNo" />
+            <el-table-column
+              align="center"
+              label="单包重量"
+              prop="singleWeight"
+            />
+            <el-table-column
+              align="center"
+              label="生产日期"
+              prop="produceDate"
+            />
+            <el-table-column
+              align="center"
+              label="有效期"
+              prop="validityDate"
+            />
+            <el-table-column align="center" label="尺寸" prop="size" />
             <el-table-column align="center" label="单位" prop="smallestUnit" />
             <el-table-column align="center" label="物料类型" prop="type" />
             <el-table-column align="center" label="入库数量" prop="number" />

@@ -54,9 +54,25 @@
         width="200"
       >
         <template #default="{ row }">
-          <el-button type="text" @click="handleEdit(row)">禁止入</el-button>
-          <el-button type="text" @click="handleEdit(row)">禁止出</el-button>
-          <el-button type="text" @click="handleEdit(row)">一键禁止</el-button>
+          <el-button type="text" @click="handleEdit(row, 1)">
+            {{ !row.ForbidInbound ? '禁止入' : '允许入' }}
+          </el-button>
+          <el-button type="text" @click="handleEdit(row, 2)">
+            {{ !row.ForbidOutbound ? '禁止出' : '允许出' }}
+          </el-button>
+          <el-button
+            v-if="row.ForbidInbound === row.ForbidOutbound"
+            type="text"
+            @click="handleEdit(row, 3)"
+          >
+            {{
+              !row.ForbidInbound && !row.ForbidOutbound
+                ? '一键禁止'
+                : row.ForbidInbound && row.ForbidOutbound
+                ? '一键允许'
+                : ''
+            }}
+          </el-button>
         </template>
       </el-table-column>
       <template #empty>
@@ -80,7 +96,12 @@
 </template>
 
 <script>
-  import { getList } from '@/api/rackLocationsManagement'
+  import {
+    getList,
+    disableOrEnableInbound,
+    disableOrEnableOutbound,
+    disableOrEnableAll,
+  } from '@/api/rackLocationsManagement'
   import Edit from './components/rackLocationsManagementEdit'
 
   export default {
@@ -88,6 +109,9 @@
     components: { Edit },
     data() {
       return {
+        disableOrEnableInbound,
+        disableOrEnableOutbound,
+        disableOrEnableAll,
         list: [],
         listLoading: true,
         layout: 'total, sizes, prev, pager, next, jumper',
@@ -103,6 +127,29 @@
       this.fetchData()
     },
     methods: {
+      async handleEdit(row, type) {
+        let methodAPI = null
+        let curType = 1
+        if (type == 1) {
+          methodAPI = this.disableOrEnableInbound
+          curType = row.ForbidInbound ? 0 : 1
+        }
+        if (type == 2) {
+          methodAPI = this.disableOrEnableOutbound
+          curType = row.ForbidOutbound ? 0 : 1
+        }
+        if (type == 3) {
+          methodAPI = this.disableOrEnableAll
+          curType =
+            !row.ForbidInbound && !row.ForbidOutbound
+              ? 1
+              : row.ForbidInbound && row.ForbidOutbound
+              ? 0
+              : 1
+        }
+        const { msg } = await methodAPI({ ids: row.Id, type: curType })
+        this.$baseMessage(msg, 'success', 'vab-hey-message-success')
+      },
       setSelectRows(val) {
         this.selectRows = val
       },

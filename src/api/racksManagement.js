@@ -49,3 +49,31 @@ export function updateupForbidOutbound(data) {
     data,
   })
 }
+
+//禁止入 允许入
+export function disableOrEnableInbound(data) {
+  return request({
+    url: '/RackLocations/DisableOrEnableInbound',
+    method: 'post',
+    data,
+  })
+}
+
+//禁止出 允许出
+export function disableOrEnableOutbound(data) {
+  return request({
+    url: '/RackLocations/DisableOrEnableOutbound',
+    method: 'post',
+    data,
+  })
+}
+
+//一键禁止 一键允许
+export function disableOrEnableAll(data) {
+  return request({
+    url: '/RackLocations/DisableOrEnableAll',
+    method: 'post',
+    data,
+  })
+}
+
