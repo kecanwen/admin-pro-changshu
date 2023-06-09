@@ -55,22 +55,20 @@
       >
         <template #default="{ row }">
           <el-button type="text" @click="handleEdit(row, 1)">
-            {{ !row.ForbidInbound ? '禁止入' : '允许入' }}
+            {{ row.ForbidInbound == '否' ? '禁止入' : '允许入' }}
           </el-button>
           <el-button type="text" @click="handleEdit(row, 2)">
-            {{ !row.ForbidOutbound ? '禁止出' : '允许出' }}
+            {{ row.ForbidOutbound == '否' ? '禁止出' : '允许出' }}
           </el-button>
-          <el-button
-            v-if="row.ForbidInbound === row.ForbidOutbound"
-            type="text"
-            @click="handleEdit(row, 3)"
-          >
+          <el-button type="text" @click="handleEdit(row, 3)">
             {{
-              !row.ForbidInbound && !row.ForbidOutbound
-                ? '一键禁止'
-                : row.ForbidInbound && row.ForbidOutbound
+              row.ForbidInbound == '否' && row.ForbidOutbound == '是'
                 ? '一键允许'
-                : ''
+                : row.ForbidInbound == '是' && row.ForbidOutbound == '否'
+                ? '一键允许'
+                : row.ForbidInbound == '是' && row.ForbidOutbound == '是'
+                ? '一键允许'
+                : '一键禁止'
             }}
           </el-button>
         </template>
@@ -132,23 +130,24 @@
         let curType = 1
         if (type == 1) {
           methodAPI = this.disableOrEnableInbound
-          curType = row.ForbidInbound ? 0 : 1
+          curType = row.ForbidInbound == '是' ? 0 : 1
         }
         if (type == 2) {
           methodAPI = this.disableOrEnableOutbound
-          curType = row.ForbidOutbound ? 0 : 1
+          curType = row.ForbidOutbound == '是' ? 0 : 1
         }
         if (type == 3) {
           methodAPI = this.disableOrEnableAll
           curType =
-            !row.ForbidInbound && !row.ForbidOutbound
+            row.ForbidInbound == '否' && row.ForbidOutbound == '否'
               ? 1
-              : row.ForbidInbound && row.ForbidOutbound
+              : row.ForbidInbound == '是' && row.ForbidOutbound == '是'
               ? 0
               : 1
         }
-        const { msg } = await methodAPI({ ids: row.Id, type: curType })
+        const { msg } = await methodAPI({ id: row.Id, type: curType })
         this.$baseMessage(msg, 'success', 'vab-hey-message-success')
+        this.fetchData()
       },
       setSelectRows(val) {
         this.selectRows = val

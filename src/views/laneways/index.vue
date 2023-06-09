@@ -22,8 +22,8 @@
     <el-table
       v-loading="listLoading"
       border
+      :cell-class-name="tableRowStyle"
       :data="list"
-      :row-style="tableRowStyle"
       @selection-change="setSelectRows"
     >
       <el-table-column align="center" show-overflow-tooltip type="selection" />
@@ -52,7 +52,7 @@
       >
         <template #default="{ row }">
           <el-button
-            v-if="!row.HasDeviceError"
+            v-if="row.HasDeviceError == '否'"
             type="text"
             @click="handleEdit(row, 1)"
           >
@@ -107,8 +107,8 @@
     methods: {
       tableRowStyle({ row }) {
         let { HasDeviceError } = row
-        if (HasDeviceError) {
-          return { background: '#f08383' }
+        if (HasDeviceError == '否') {
+          return 'errorClass'
         } else {
           return {}
         }
@@ -143,7 +143,7 @@
       handleEdit(row, type) {
         if (row.Id) {
           this.$baseConfirm('你确定要操作当前项吗', null, async () => {
-            const { msg } = await doEdit({ ids: row.Id, type })
+            const { msg } = await doEdit({ id: row.Id, type })
             this.$baseMessage(msg, 'success', 'vab-hey-message-success')
             await this.fetchData()
           })
@@ -152,3 +152,11 @@
     },
   }
 </script>
+
+<style lang="scss">
+  .errorClass {
+    .cell {
+      color: #cc1f1f !important;
+    }
+  }
+</style>
