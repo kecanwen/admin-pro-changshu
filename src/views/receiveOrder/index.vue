@@ -23,7 +23,7 @@
             <el-input
               v-model.trim="queryForm.materialsName"
               clearable
-              placeholder="请输入仓库名"
+              placeholder="请输入库单号"
             />
           </el-form-item>
           <el-form-item>
@@ -51,11 +51,13 @@
               align="center"
               label="物料编码"
               prop="materialsCode"
+              width="160"
             />
             <el-table-column
               align="center"
               label="物料名称"
               prop="materialsName"
+              width="160"
             />
             <el-table-column align="center" label="批次号" prop="batchNo" />
             <el-table-column
@@ -73,7 +75,12 @@
               label="有效期"
               prop="validityDate"
             />
-            <el-table-column align="center" label="尺寸" prop="size" />
+            <el-table-column
+              align="center"
+              label="尺寸"
+              prop="size"
+              width="160"
+            />
             <el-table-column align="center" label="单位" prop="smallestUnit" />
             <el-table-column align="center" label="物料类型" prop="type" />
             <el-table-column align="center" label="入库数量" prop="number" />
@@ -92,7 +99,12 @@
       <el-table-column align="center" label="托盘号" prop="PalletNo" />
       <el-table-column align="center" label="供应商" prop="Supplier" />
       <el-table-column align="center" label="创建人 " prop="CreatedBy" />
-      <el-table-column align="center" label="创建时间" prop="CreatedAt" />
+      <el-table-column
+        align="center"
+        label="创建时间"
+        prop="CreatedAt"
+        width="160"
+      />
 
       <el-table-column
         align="center"

@@ -31,7 +31,7 @@
               v-for="item in materialsTypeList"
               :key="item.Code"
               :label="item.Name"
-              :value="item.Code"
+              :value="item.Name"
             />
           </el-select>
         </el-form-item>
@@ -222,8 +222,9 @@
           { name: '砂芯原料', color: 'rgba(252,213,181)', code: 'SXYL' },
           { name: '孕育剂原料', color: 'rgba(102,204,255)', code: 'YYJYL' },
           { name: '熔剂原料', color: 'rgba(185,205,229)', code: 'RJYL' },
-          { name: '涂料原料', color: 'rgb(80,255,127)', code: 'TLYL' },
+          { name: '涂料原料', color: 'rgb(80,255,127)', code: '涂料原料' },
           { name: '冒口原料', color: 'rgba(230,185,184)', code: 'MKYL' },
+          { name: '空托盘', color: 'rgba(230,185,184)', code: '空托盘' },
         ],
       }
     },
@@ -241,7 +242,11 @@
         let arr = this.colorList.filter((ite) => {
           return ite.code === item.Group
         })
-        return arr.length > 0 ? arr[0].color : '#fff'
+        if (this.form.partition) {
+          return arr.length > 0 ? arr[0].color : '#fff'
+        } else {
+          return '#fff'
+        }
       },
       async AddxGroup() {
         if (!this.checkIsNotElement()) {
@@ -442,18 +447,18 @@
             .unit {
               width: 30px;
               height: 40px;
-              text-align: center;
               line-height: 40px;
+              text-align: center;
               .girds {
+                position: relative;
                 width: 100%;
                 height: 40px;
+                padding-top: 8px;
+                font-size: 14px;
+                cursor: pointer;
                 background-color: #fff;
                 border: 1px solid #ccc;
-                position: relative;
-                font-size: 14px;
                 border-radius: 4px;
-                cursor: pointer;
-                padding-top: 8px;
                 img {
                   width: 26px;
                   height: 25px;
@@ -470,14 +475,14 @@
     .colorContent {
       ul {
         display: flex;
-        align-items: center;
         flex-wrap: wrap;
+        align-items: center;
         li {
-          list-style: none;
-          margin-right: 30px;
-          margin-bottom: 10px;
           display: flex;
           align-items: center;
+          margin-right: 30px;
+          margin-bottom: 10px;
+          list-style: none;
           .name {
             margin-right: 8px;
           }

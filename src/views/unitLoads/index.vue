@@ -81,27 +81,28 @@
         width="160"
       />
       <el-table-column align="center" label="批次" prop="BatchNo" width="150" />
+      <el-table-column
+        align="center"
+        label="单包重量"
+        prop="Str1"
+        width="150"
+      />
+      <el-table-column
+        align="center"
+        label="生产日期"
+        prop="Str2"
+        width="150"
+      />
+      <el-table-column align="center" label="有效期" prop="Str3" width="150" />
+      <el-table-column align="center" label="尺寸" prop="Str4" width="150" />
       <el-table-column align="center" label="数量" prop="number" />
-      <el-table-column
-        v-if="false"
-        align="center"
-        label="总数量"
-        prop="SumNumber"
-      />
-      <el-table-column
-        v-if="false"
-        align="center"
-        label="单品重量"
-        prop="Weight"
-      />
-      <el-table-column align="center" label="总重量" prop="SumWeight" />
       <el-table-column
         align="center"
         label="物料类型"
-        prop="KCZZ"
+        prop="Type"
         width="150"
       />
-      <el-table-column align="center" label="质检状态" prop="QCStatus" />
+      <el-table-column align="center" label="判定区分" prop="QCStatus" />
       <el-table-column align="center" label="货位类型" prop="CKMC" />
       <el-table-column
         v-if="false"

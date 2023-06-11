@@ -107,7 +107,7 @@
     methods: {
       tableRowStyle({ row }) {
         let { HasDeviceError } = row
-        if (HasDeviceError == '否') {
+        if (HasDeviceError == '是') {
           return 'errorClass'
         } else {
           return {}
