@@ -1,7 +1,7 @@
 <template>
   <div class="tasks-management-container">
     <vab-query-form>
-      <vab-query-form-left-panel :span="12">
+      <!-- <vab-query-form-left-panel :span="12">
         <el-button
           icon="el-icon-plus"
           type="primary"
@@ -16,7 +16,7 @@
         >
           批量删除
         </el-button>
-      </vab-query-form-left-panel>
+      </vab-query-form-left-panel> -->
       <vab-query-form-right-panel :span="12">
         <el-form :inline="true" :model="queryForm" @submit.native.prevent>
           <el-form-item>
@@ -42,7 +42,7 @@
       @selection-change="setSelectRows"
     >
       <el-table-column align="center" show-overflow-tooltip type="selection" />
-      <el-table-column align="center" label="序号" width="55">
+      <el-table-column v-if="false" align="center" label="序号" width="55">
         <template #default="{ $index }">
           {{ $index + 1 }}
         </template>
@@ -54,7 +54,7 @@
         prop="TaskCode"
         width="130"
       />
-      <!-- <el-table-column align="center" label="容器编码" prop="ContainerCode" /> -->
+      <el-table-column align="center" label="容器编码" prop="ContainerCode" />
       <el-table-column
         align="center"
         label="起点 "
@@ -82,12 +82,14 @@
       />
       <el-table-column align="center" label="任务类型" prop="TaskType" />
 
-      <el-table-column align="center" label="操作" width="255">
+      <el-table-column align="center" label="操作" width="160">
         <template #default="{ row }">
-          <el-button type="text" @click="handleEdit(row)">强制完成</el-button>
-          <el-button type="text" @click="handleDelete(row)">取消任务</el-button>
-          <el-button type="text" @click="handleEdit(row)">编辑任务</el-button>
-          <el-button type="text" @click="handleDelete(row)">暂停任务</el-button>
+          <el-button type="text" @click="handleComplete(row)">
+            强制完成
+          </el-button>
+          <el-button type="text" @click="handleCancel(row)">取消任务</el-button>
+          <!-- <el-button type="text" @click="handleEdit(row)">编辑任务</el-button>
+          <el-button type="text" @click="handleDelete(row)">暂停任务</el-button> -->
         </template>
       </el-table-column>
       <template #empty>
@@ -111,7 +113,7 @@
 </template>
 
 <script>
-  import { doDelete, getList } from '@/api/tasksManagement'
+  import { doComplete, doCancel, getList } from '@/api/tasksManagement'
   import Edit from './components/tasksManagementEdit'
 
   export default {
@@ -145,24 +147,28 @@
           this.$refs['edit'].showEdit()
         }
       },
-      handleDelete(row) {
+      handleComplete(row) {
         if (row.Id) {
-          this.$baseConfirm('你确定要删除当前项吗', null, async () => {
-            const { msg } = await doDelete({ ids: row.Id })
-            this.$baseMessage(msg, 'success', 'vab-hey-message-success')
-            await this.fetchData()
-          })
-        } else {
-          if (this.selectRows.length > 0) {
-            const ids = this.selectRows.map((item) => item.Id).join()
-            this.$baseConfirm('你确定要删除选中项吗', null, async () => {
-              const { msg } = await doDelete({ ids })
-              this.$baseMessage(msg, 'success', 'vab-hey-message-success')
-              await this.fetchData()
+          this.$baseConfirm('你确定要操作当前项吗?', null, async () => {
+            const { msg } = await doComplete({
+              taskCode: row.TaskCode,
+              taskType: row.TaskType,
             })
-          } else {
-            this.$baseMessage('未选中任何行', 'error', 'vab-hey-message-error')
-          }
+            this.$baseMessage(msg, 'success', 'vab-hey-message-success')
+            this.fetchData()
+          })
+        }
+      },
+      handleCancel(row) {
+        if (row.Id) {
+          this.$baseConfirm('你确定要操作当前项吗?', null, async () => {
+            const { msg } = await doCancel({
+              id: row.Id,
+              containerCode: row.ContainerCode,
+            })
+            this.$baseMessage(msg, 'success', 'vab-hey-message-success')
+            this.fetchData()
+          })
         }
       },
       handleSizeChange(val) {

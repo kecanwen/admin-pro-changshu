@@ -118,7 +118,7 @@
 </template>
 
 <script>
-  import { doDelete, getArchivedsList } from '@/api/tasksManagement'
+  import { getArchivedsList } from '@/api/tasksManagement'
   import Edit from './components/tasksManagementEdit'
 
   export default {
@@ -152,26 +152,26 @@
           this.$refs['edit'].showEdit()
         }
       },
-      handleDelete(row) {
-        if (row.Id) {
-          this.$baseConfirm('你确定要删除当前项吗', null, async () => {
-            const { msg } = await doDelete({ ids: row.Id })
-            this.$baseMessage(msg, 'success', 'vab-hey-message-success')
-            await this.fetchData()
-          })
-        } else {
-          if (this.selectRows.length > 0) {
-            const ids = this.selectRows.map((item) => item.Id).join()
-            this.$baseConfirm('你确定要删除选中项吗', null, async () => {
-              const { msg } = await doDelete({ ids })
-              this.$baseMessage(msg, 'success', 'vab-hey-message-success')
-              await this.fetchData()
-            })
-          } else {
-            this.$baseMessage('未选中任何行', 'error', 'vab-hey-message-error')
-          }
-        }
-      },
+      // handleDelete(row) {
+      //   if (row.Id) {
+      //     this.$baseConfirm('你确定要删除当前项吗', null, async () => {
+      //       const { msg } = await doDelete({ ids: row.Id })
+      //       this.$baseMessage(msg, 'success', 'vab-hey-message-success')
+      //       await this.fetchData()
+      //     })
+      //   } else {
+      //     if (this.selectRows.length > 0) {
+      //       const ids = this.selectRows.map((item) => item.Id).join()
+      //       this.$baseConfirm('你确定要删除选中项吗', null, async () => {
+      //         const { msg } = await doDelete({ ids })
+      //         this.$baseMessage(msg, 'success', 'vab-hey-message-success')
+      //         await this.fetchData()
+      //       })
+      //     } else {
+      //       this.$baseMessage('未选中任何行', 'error', 'vab-hey-message-error')
+      //     }
+      //   }
+      // },
       handleSizeChange(val) {
         this.queryForm.pageSize = val
         this.fetchData()

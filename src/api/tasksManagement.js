@@ -15,36 +15,18 @@ export function getArchivedsList(params) {
     params: params,
   })
 }
-
-export function doEdit(data) {
+//强制完成任务
+export function doComplete(data) {
   return request({
-    url: '/Tasks/AddOrUpdate',
+    url: '/Tasks/DoComplete',
     method: 'post',
     data,
   })
 }
-
-export function doDelete(data) {
+//取消任务
+export function doCancel(data) {
   return request({
-    url: '/Tasks/Delete',
-    method: 'post',
-    data,
-  })
-}
-
-//禁入
-export function updateForbidInbound(data) {
-  return request({
-    url: '/PlainLocations/UpdateForbidInbound',
-    method: 'post',
-    data,
-  })
-}
-
-//禁出
-export function updateupForbidOutbound(data) {
-  return request({
-    url: '/PlainLocations/UpdateupForbidOutbound',
+    url: '/Tasks/DoCancel',
     method: 'post',
     data,
   })

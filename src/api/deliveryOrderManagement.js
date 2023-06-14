@@ -31,3 +31,20 @@ export function Add0rUpdateAPI(data) {
     data,
   })
 }
+//获取入库口
+export function getckLocationCodeListApi(params) {
+  return request({
+    url: '/PlainLocations/GetckLocationCodeList',
+    method: 'get',
+    params,
+  })
+}
+
+//获取货主
+export function getTradingCompanysApi(params) {
+  return request({
+    url: '/ReceiveOrder/GetCargoOwnerOptions',
+    method: 'get',
+    params,
+  })
+}

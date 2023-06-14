@@ -14,13 +14,13 @@
           placeholder="出库单号自动生成"
         />
       </el-form-item>
-      <el-form-item label="出库口" prop="Destination">
-        <el-select v-model="form.Destination" placeholder="请选择">
+      <el-form-item label="出库口" prop="OutLocationCode">
+        <el-select v-model="form.OutLocationCode" placeholder="请选择">
           <el-option
-            v-for="item in cargoOwnerOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+            v-for="dict in ckLocationCodeList"
+            :key="dict.UserCode"
+            :label="dict.Name"
+            :value="dict.UserCode"
           />
         </el-select>
       </el-form-item>
@@ -37,10 +37,10 @@
       <el-form-item label="客户" prop="TradingCompany">
         <el-select v-model="form.TradingCompany" placeholder="请选择">
           <el-option
-            v-for="item in cargoOwnerOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+            v-for="dict in TradingCompanys"
+            :key="dict.Code"
+            :label="dict.Name"
+            :value="dict.Name"
           />
         </el-select>
       </el-form-item>
@@ -56,6 +56,7 @@
         </template>
       </el-table-column>
       <el-table-column align="center" label="物料编码" prop="materialsCode" />
+      <el-table-column align="center" label="物料名称" prop="materialsName" />
       <el-table-column align="center" label="出库数量 " prop="number" />
       <el-table-column
         align="center"
@@ -81,7 +82,7 @@
     </el-row>
     <el-dialog
       append-to-body
-      title="新建收货单明细"
+      title="新建发货单明细"
       :visible.sync="innerVisible.innerAddVisible"
       width="50%"
     >
@@ -160,6 +161,8 @@
   import {
     getLikeMaterialsList,
     Add0rUpdateAPI,
+    getckLocationCodeListApi,
+    getTradingCompanysApi,
   } from '@/api/deliveryOrderManagement'
 
   export default {
@@ -169,6 +172,7 @@
         queryString: '',
         id: 1,
         restaurantList: [],
+        ckLocationCodeList: [],
         childrenList: [],
         innerVisible: {
           innerAddVisible: false,
@@ -186,11 +190,8 @@
           TradingCompany: '',
           items: [],
         },
-        cargoOwnerOptions: [{ label: '重庆惠达', value: 'cqhd' }],
-        documentTypeOptions: [
-          { label: '普通出库', value: 'cqhd1' },
-          { label: '手工出库', value: 'cqhd2' },
-        ],
+        TradingCompanys: [],
+        documentTypeOptions: [{ label: '普通出库', value: 'PTCK' }],
         addForm: {
           materialsName: '',
           materialsCode: '',
@@ -210,9 +211,6 @@
             { required: true, trigger: 'blur', message: '请选择货主' },
           ],
           WaveType: [{ required: true, trigger: 'blur', message: '单据类型' }],
-          TradingCompany: [
-            { required: true, trigger: 'blur', message: '请选择客户' },
-          ],
         },
         title: '',
         dialogFormVisible: false,
@@ -222,6 +220,10 @@
       ...mapGetters({
         username: 'user/username',
       }),
+    },
+    created() {
+      this.getrkLocationCodeList()
+      this.getTradingCompanys()
     },
     mounted() {},
     methods: {
@@ -325,6 +327,22 @@
         assignObj.inTime = time
         assignObj.recivedTime = time
         this.addForm = assignObj
+      },
+      async getrkLocationCodeList() {
+        const res = await getckLocationCodeListApi()
+        if (res.code == 200) {
+          this.ckLocationCodeList = res.data.list
+        } else {
+          this.ckLocationCodeList = []
+        }
+      },
+      async getTradingCompanys() {
+        const res = await getTradingCompanysApi()
+        if (res.code == 200) {
+          this.TradingCompanys = res.data.list
+        } else {
+          this.TradingCompanys = []
+        }
       },
     },
   }
