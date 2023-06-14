@@ -240,7 +240,7 @@
     methods: {
       computedBackground(item) {
         let arr = this.colorList.filter((ite) => {
-          return ite.code === item.Group
+          return ite.code === item.Group && this.form.partition === item.Group
         })
         if (this.form.partition) {
           return arr.length > 0 ? arr[0].color : '#fff'
