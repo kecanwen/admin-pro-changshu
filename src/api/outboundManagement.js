@@ -99,3 +99,21 @@ export function getrkLocationCodeListApi(params) {
     params,
   })
 }
+
+//手工出库
+export function GetManualOutAPI(data) {
+  return request({
+    url: '/ManualOut/GetManualOut',
+    method: 'post',
+    data,
+  })
+}
+
+//取消任务
+export function GetCancelTaskAPI(data) {
+  return request({
+    url: '/ManualOut/GetCancelTask',
+    method: 'post',
+    data,
+  })
+}

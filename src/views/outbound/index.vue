@@ -4,10 +4,35 @@
       <vab-query-form-right-panel :span="12">
         <el-form :inline="true" :model="queryForm" @submit.native.prevent>
           <el-form-item>
+            <el-select
+              v-model="queryForm.outExitNum"
+              clearable
+              placeholder="请选择出库口"
+            >
+              <el-option
+                v-for="(item, index) in outExitList"
+                :key="index"
+                :label="item.Name"
+                :value="item.UserCode"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button icon="el-icon-box" type="primary" @click="manualOutExit">
+              手工出库
+            </el-button>
+          </el-form-item>
+          <el-form-item>
+            <el-button icon="el-icon-box" type="primary" @click="cancelTask">
+              取消任务
+            </el-button>
+          </el-form-item>
+          <el-form-item>
             <el-input
               v-model.trim="queryForm.materialsName"
               clearable
               placeholder="请输入库单号"
+              style="margin: 0 10px"
             />
           </el-form-item>
           <el-form-item>
@@ -131,9 +156,11 @@
     doDelete,
     getList,
     getOutExitListApi,
+    GetManualOutAPI,
+    GetCancelTaskAPI,
   } from '@/api/outboundManagement'
   import Edit from './components/receiveOrderManagementEdit'
-
+  import { mapGetters } from 'vuex'
   export default {
     name: 'OutboundManagement',
     components: { Edit },
@@ -145,20 +172,48 @@
         layout: 'total, sizes, prev, pager, next, jumper',
         total: 0,
         selectRows: '',
+        selectRowsString: '',
         queryForm: {
           pageNo: 1,
           pageSize: 10,
           materialsName: '',
+          outExitNum: '',
         },
       }
+    },
+    computed: {
+      ...mapGetters({
+        username: 'user/username',
+      }),
     },
     created() {
       this.fetchData()
       this.getOutExitListMethod()
     },
     methods: {
-      setSelectRows(val) {
-        this.selectRows = val
+      async manualOutExit() {
+        let data = {
+          unitLoadIds: this.selectRowsString,
+          toLocationCode: this.queryForm.outExitNum,
+          createdBy: this.username,
+        }
+        const { msg, code } = await GetManualOutAPI(data)
+        code == 200
+          ? this.$baseMessage(msg, 'success', 'vab-hey-message-success')
+          : this.$baseMessage(msg, 'error', 'vab-hey-message-error')
+      },
+      async cancelTask() {
+        let data = {
+          unitLoadIds: this.selectRowsString,
+        }
+        const { msg, code } = await GetCancelTaskAPI(data)
+        code == 200
+          ? this.$baseMessage(msg, 'success', 'vab-hey-message-success')
+          : this.$baseMessage(msg, 'error', 'vab-hey-message-error')
+      },
+      setSelectRows(arr) {
+        this.selectRows = arr
+        this.selectRowsString = arr.map((item) => item.Id).toString()
       },
       handleEdit(row) {
         if (row.Id) {
