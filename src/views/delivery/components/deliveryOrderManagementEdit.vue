@@ -88,7 +88,8 @@
     >
       <el-form
         ref="addForm"
-        label-width="100px"
+        :inline="true"
+        label-width="140px"
         :model="addForm"
         :rules="addRules"
       >
@@ -120,18 +121,20 @@
           <el-input
             v-model="addForm.batchNo"
             class="inline-input"
+            disabled
             style="width: 180px"
           />
         </el-form-item>
-        <el-form-item label="收货数量：" prop="number">
+        <el-form-item label="出库数量：" prop="number">
           <el-input-number
             v-model.trim="addForm.number"
             controls-position="right"
-            :max="1000"
+            :max="10000"
             :min="1"
+            style="width: 190px"
           />
         </el-form-item>
-        <el-form-item label="入库时间：" prop="inTime">
+        <el-form-item label="生产日期：" prop="inTime">
           <el-input
             v-model.trim="addForm.inTime"
             class="inline-input"

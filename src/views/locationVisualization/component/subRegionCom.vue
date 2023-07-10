@@ -213,18 +213,20 @@
           { name: '熔剂成品', color: 'rgba(217,150,148)', code: 'RJCP' },
           { name: '冒口成品', color: 'rgba(230,185,184)', code: 'MKCP' },
           { name: 'Premix半成品', color: 'rgba(204,204,255)', code: 'Premix' },
-          { name: '危险化学品', color: 'rgb(255,33,40)', code: 'WXHXP' },
           {
-            name: 'Pre-kitting预配',
-            color: 'rgba(230,224,236)',
-            code: 'PreKitting',
+            name: 'Pre-kitting预配料',
+            color: 'rgb(255,33,40)',
+            code: 'Pre-kitting',
           },
-          { name: '砂芯原料', color: 'rgba(252,213,181)', code: 'SXYL' },
+          {
+            name: '砂芯原料',
+            color: 'rgba(230,224,236)',
+            code: 'SXYL',
+          },
           { name: '孕育剂原料', color: 'rgba(102,204,255)', code: 'YYJYL' },
           { name: '熔剂原料', color: 'rgba(185,205,229)', code: 'RJYL' },
-          { name: '涂料原料', color: 'rgb(80,255,127)', code: '涂料原料' },
-          { name: '冒口原料', color: 'rgba(230,185,184)', code: 'MKYL' },
-          { name: '空托盘', color: 'rgba(230,185,184)', code: '空托盘' },
+          { name: '冒口&涂料原料', color: 'rgb(80,255,127)', code: 'MKTLYL' },
+          { name: '空托盘', color: 'rgba(230,185,184)', code: 'KTP' },
         ],
       }
     },
@@ -240,7 +242,7 @@
     methods: {
       computedBackground(item) {
         let arr = this.colorList.filter((ite) => {
-          return ite.code === item.Group && this.form.partition === item.Group
+          return ite.name === item.Group && this.form.partition === item.Group
         })
         if (this.form.partition) {
           return arr.length > 0 ? arr[0].color : '#fff'
@@ -269,6 +271,7 @@
         } else {
           this.$message.error(res.msg)
         }
+        this.queryManagerLocation()
       },
       async DeletexGroup() {
         if (!this.checkIsNotElement()) {

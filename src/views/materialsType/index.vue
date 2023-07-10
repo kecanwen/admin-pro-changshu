@@ -42,7 +42,7 @@
       @selection-change="setSelectRows"
     >
       <el-table-column align="center" show-overflow-tooltip type="selection" />
-      <el-table-column align="center" label="序号" width="55">
+      <el-table-column v-if="false" align="center" label="序号" width="55">
         <template #default="{ $index }">
           {{ $index + 1 }}
         </template>

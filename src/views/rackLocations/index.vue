@@ -5,7 +5,7 @@
         <el-form :inline="true" :model="queryForm" @submit.native.prevent>
           <el-form-item>
             <el-input
-              v-model.trim="queryForm.plainName"
+              v-model.trim="queryForm.UserCode"
               clearable
               placeholder="请输入货位编码"
             />

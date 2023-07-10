@@ -1,7 +1,23 @@
 <template>
   <div class="receiveOrder-management-container">
     <vab-query-form>
-      <vab-query-form-right-panel :span="12">
+      <vab-query-form-left-panel>
+        <el-form :inline="true" :model="queryForm" @submit.native.prevent>
+          <el-form-item>
+            <el-input
+              v-model.trim="queryForm.MaterialCode"
+              clearable
+              placeholder="请输入物料编码"
+            />
+          </el-form-item>
+          <el-form-item>
+            <el-button icon="el-icon-search" type="primary" @click="queryData">
+              查询
+            </el-button>
+          </el-form-item>
+        </el-form>
+      </vab-query-form-left-panel>
+      <vab-query-form-right-panel :span="10">
         <el-form :inline="true" :model="queryForm" @submit.native.prevent>
           <el-form-item>
             <el-select
@@ -25,19 +41,6 @@
           <el-form-item>
             <el-button icon="el-icon-box" type="primary" @click="cancelTask">
               取消任务
-            </el-button>
-          </el-form-item>
-          <el-form-item>
-            <el-input
-              v-model.trim="queryForm.materialsName"
-              clearable
-              placeholder="请输入库单号"
-              style="margin: 0 10px"
-            />
-          </el-form-item>
-          <el-form-item>
-            <el-button icon="el-icon-search" type="primary" @click="queryData">
-              查询
             </el-button>
           </el-form-item>
         </el-form>
@@ -109,6 +112,7 @@
         </template>
       </el-table-column>
       <el-table-column v-if="false" align="center" label="Id" prop="Id" />
+      <el-table-column align="center" label="任务状态 " prop="FeatureCode" />
       <el-table-column align="center" label="入库时间 " prop="CreatedAt" />
       <el-table-column align="center" label="当前位置" prop="CurrentLocation" />
       <el-table-column align="center" label="托盘号" prop="ContainerCode" />
@@ -120,7 +124,7 @@
         width="160"
       />
 
-      <el-table-column
+      <!-- <el-table-column
         align="center"
         label="操作"
         show-overflow-tooltip
@@ -130,7 +134,7 @@
           <el-button type="text" @click="handleEdit(row)">编辑</el-button>
           <el-button type="text" @click="handleDelete(row)">删除</el-button>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <template #empty>
         <el-image
           class="vab-data-empty"
@@ -201,6 +205,7 @@
         code == 200
           ? this.$baseMessage(msg, 'success', 'vab-hey-message-success')
           : this.$baseMessage(msg, 'error', 'vab-hey-message-error')
+        await this.fetchData()
       },
       async cancelTask() {
         let data = {
@@ -210,6 +215,7 @@
         code == 200
           ? this.$baseMessage(msg, 'success', 'vab-hey-message-success')
           : this.$baseMessage(msg, 'error', 'vab-hey-message-error')
+        await this.fetchData()
       },
       setSelectRows(arr) {
         this.selectRows = arr
