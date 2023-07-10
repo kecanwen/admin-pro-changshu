@@ -49,16 +49,20 @@
       <el-button @click="close">取 消</el-button>
       <el-button type="primary" @click="save">确 定</el-button>
     </template>
-    <el-table border :data="childrenList">
-      <el-table-column align="center" label="序号" width="55">
-        <template #default="{ $index }">
-          {{ $index + 1 }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="物料编码" prop="materialsCode" />
-      <el-table-column align="center" label="物料名称" prop="materialsName" />
-      <el-table-column align="center" label="出库数量 " prop="number" />
-      <el-table-column
+    <el-table
+      ref="tableRef"
+      border
+      :data="childrenList"
+      @selection-change="selectionChange"
+    >
+      <el-table-column type="selection" width="55" />
+      <el-table-column align="center" label="库位 " prop="CurrentLocation" />
+      <el-table-column align="center" label="托盘号 " prop="ContainerCode" />
+      <el-table-column align="center" label="物料代码" prop="MaterialCode" />
+      <el-table-column align="center" label="批号" prop="BatchNo" />
+      <el-table-column align="center" label="生产日期" prop="ProduceDate" />
+      <el-table-column align="center" label="数量 " prop="Number" />
+      <!--   <el-table-column
         align="center"
         label="操作"
         show-overflow-tooltip
@@ -67,7 +71,7 @@
         <template #default="{ row }">
           <el-button type="text" @click="handleDelete(row)">删除</el-button>
         </template>
-      </el-table-column>
+      </el-table-column>-->
       <template #empty>
         <el-image
           class="vab-data-empty"
@@ -88,7 +92,6 @@
     >
       <el-form
         ref="addForm"
-        :inline="true"
         label-width="140px"
         :model="addForm"
         :rules="addRules"
@@ -102,8 +105,14 @@
             value-key="materialsName"
             @select="handleSelect"
           />
+          <span>
+            <span style="padding: 0 20px">
+              <b>库存总数</b>
+              ：{{ addForm.SumNumber }}
+            </span>
+          </span>
         </el-form-item>
-        <el-form-item label="物料编码：" prop="materialsCode">
+        <!--      <el-form-item label="物料编码：" prop="materialsCode">
           <el-autocomplete
             v-model="addForm.materialsCode"
             class="inline-input"
@@ -116,7 +125,7 @@
             class="inline-input"
             disabled
           />
-        </el-form-item>
+        </el-form-item>-->
         <el-form-item label="批次号：" prop="batchNo">
           <el-input
             v-model="addForm.batchNo"
@@ -129,12 +138,16 @@
           <el-input-number
             v-model.trim="addForm.number"
             controls-position="right"
-            :max="10000"
+            :max="addForm.SumNumber"
             :min="1"
             style="width: 190px"
           />
+          <span style="margin-left: 20px; color: #999999">
+            <i class="el-icon-warning-outline"></i>
+            出库数量不能大于库存总数
+          </span>
         </el-form-item>
-        <el-form-item label="生产日期：" prop="inTime">
+        <!--   <el-form-item label="生产日期：" prop="inTime">
           <el-input
             v-model.trim="addForm.inTime"
             class="inline-input"
@@ -149,7 +162,7 @@
             disabled
             style="width: 180px"
           />
-        </el-form-item>
+        </el-form-item>-->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="saveChildren">保存</el-button>
@@ -166,6 +179,7 @@
     Add0rUpdateAPI,
     getckLocationCodeListApi,
     getTradingCompanysApi,
+    GetUnitLoadListApi,
   } from '@/api/deliveryOrderManagement'
 
   export default {
@@ -198,6 +212,7 @@
         addForm: {
           materialsName: '',
           materialsCode: '',
+          SumNumber: 10000,
           batchNo: '',
           number: '',
           inTime: '',
@@ -230,6 +245,9 @@
     },
     mounted() {},
     methods: {
+      selectionChange(selection) {
+        this.form.items = selection
+      },
       async loadAll(queryString = '') {
         const { data, code } = await getLikeMaterialsList({
           materialsStr: queryString,
@@ -243,9 +261,7 @@
       saveChildren() {
         this.$refs['addForm'].validate(async (valid) => {
           if (valid) {
-            let id = this.id++
-            this.childrenList.push({ ...this.addForm, id })
-            this.innerVisible.innerAddVisible = false
+            this.GetUnitLoadListMethod()
           }
         })
       },
@@ -298,7 +314,6 @@
         this.$refs['form'].validate(async (valid) => {
           if (valid) {
             this.form.CreatedBy = this.username
-            this.form.items = [...this.childrenList]
             const { msg } = await Add0rUpdateAPI(this.form)
             this.$baseMessage(msg, 'success', 'vab-hey-message-success')
             this.$emit('fetch-data')
@@ -325,7 +340,11 @@
         cb(results)
       },
       handleSelect(row) {
-        let assignObj = Object.assign(this.addForm, { ...row })
+        let assignObj = Object.assign(
+          this.addForm,
+          { ...row },
+          { SumNumber: Number(row.SumNumber) }
+        )
         let time = dayjs().format('YYYY-M-D HH:mm:ss')
         assignObj.inTime = time
         assignObj.recivedTime = time
@@ -338,6 +357,16 @@
         } else {
           this.ckLocationCodeList = []
         }
+      },
+      async GetUnitLoadListMethod() {
+        const res = await GetUnitLoadListApi()
+        if (res.code == 200) {
+          this.childrenList = res.data.list
+        } else {
+          this.childrenList = []
+        }
+        this.innerVisible.innerAddVisible = false
+        this.$refs['tableRef'].toggleAllSelection()
       },
       async getTradingCompanys() {
         const res = await getTradingCompanysApi()

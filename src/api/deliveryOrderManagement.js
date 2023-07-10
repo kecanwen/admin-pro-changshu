@@ -48,3 +48,12 @@ export function getTradingCompanysApi(params) {
     params,
   })
 }
+
+//获取列表
+export function GetUnitLoadListApi(params) {
+  return request({
+    url: '/Delivery/GetUnitLoadList',
+    method: 'get',
+    params,
+  })
+}
