@@ -9,30 +9,33 @@
     name: 'App',
     data() {
       return {
-        beforeTime: 0,
         lastClickTime: 0,
       }
     },
     mounted() {
-      window.addEventListener('beforeunload', this.handleBeforeUnload)
+      window.addEventListener('load', this.handleLoad)
       window.addEventListener('unload', this.handleUnload)
       window.addEventListener('click', this.watchScreenActive)
     },
     beforeDestroy() {
-      window.removeEventListener('beforeunload', this.handleBeforeUnload)
-      window.removeEventListener('click', this.watchScreenActive)
+      window.removeEventListener('load', this.handleLoad)
       window.removeEventListener('unload', this.handleUnload)
+      window.removeEventListener('click', this.watchScreenActive)
     },
     methods: {
-      handleBeforeUnload() {
-        this.beforeTime = new Date().getTime()
-      },
       //关闭标签退出登陆态  刷新不退出登陆态
-      handleUnload() {
-        let _gap_time = new Date().getTime() - this.beforeTime
-        if (_gap_time <= 5) {
+      handleLoad() {
+        let beforeTime = JSON.parse(localStorage.getItem('beforeTime'))
+        let _gap_time = new Date().getTime() - beforeTime
+        console.log(_gap_time, '间隔时间')
+        if (_gap_time > 5000) {
           localStorage.removeItem('admin-pro-token')
         }
+      },
+      handleUnload() {
+        let beforeTime = new Date().getTime()
+        localStorage.setItem('beforeTime', JSON.stringify(beforeTime))
+        console.log(beforeTime, '结束时间')
       },
       //超30分钟不操作 退出登陆
       watchScreenActive() {
