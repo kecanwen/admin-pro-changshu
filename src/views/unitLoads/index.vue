@@ -44,6 +44,12 @@
       <el-table-column v-if="false" align="center" label="Id" prop="Id" />
       <el-table-column
         align="center"
+        label="入库时间"
+        prop="CreatedAt"
+        width="160"
+      />
+      <el-table-column
+        align="center"
         label="当前位置"
         prop="CurrentLocation"
         width="150"
@@ -80,6 +86,7 @@
         prop="MaterialName"
         width="160"
       />
+      <el-table-column align="center" label="数量" prop="number" />
       <el-table-column align="center" label="批次" prop="BatchNo" width="150" />
       <el-table-column
         align="center"
@@ -95,7 +102,7 @@
       />
       <el-table-column align="center" label="有效期" prop="Str3" width="150" />
       <el-table-column align="center" label="尺寸" prop="Str4" width="150" />
-      <el-table-column align="center" label="数量" prop="number" />
+
       <el-table-column
         align="center"
         label="物料类型"

@@ -40,6 +40,16 @@
             <el-table-column v-if="false" align="center" label="Id" prop="Id" />
             <el-table-column
               align="center"
+              label="托盘号"
+              prop="ContainerCode"
+            />
+            <el-table-column
+              align="center"
+              label="库位号"
+              prop="CurrentLocation"
+            />
+            <el-table-column
+              align="center"
               label="物料编码"
               prop="materialsCode"
             />

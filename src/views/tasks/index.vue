@@ -74,12 +74,12 @@
         prop="CreatedAt"
         width="160"
       />
-      <el-table-column
+      <!-- <el-table-column
         align="center"
         label="下发时间"
         prop="SentToWcsAt"
         width="160"
-      />
+      /> -->
       <el-table-column align="center" label="任务类型" prop="TaskType" />
 
       <el-table-column align="center" label="操作" width="160">
@@ -87,7 +87,7 @@
           <el-button type="text" @click="handleComplete(row)">
             强制完成
           </el-button>
-          <el-button type="text" @click="handleCancel(row)">取消任务</el-button>
+          <!-- <el-button type="text" @click="handleCancel(row)">取消任务</el-button> -->
           <!-- <el-button type="text" @click="handleEdit(row)">编辑任务</el-button>
           <el-button type="text" @click="handleDelete(row)">暂停任务</el-button> -->
         </template>
@@ -153,6 +153,7 @@
             const { msg } = await doComplete({
               taskCode: row.TaskCode,
               taskType: row.TaskType,
+              containerCode: row.ContainerCode,
             })
             this.$baseMessage(msg, 'success', 'vab-hey-message-success')
             this.fetchData()

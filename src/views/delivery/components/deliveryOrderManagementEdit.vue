@@ -14,8 +14,8 @@
           placeholder="出库单号自动生成"
         />
       </el-form-item>
-      <el-form-item label="出库口" prop="OutLocationCode">
-        <el-select v-model="form.OutLocationCode" placeholder="请选择">
+      <el-form-item label="出库口" prop="Destination">
+        <el-select v-model="form.Destination" placeholder="请选择">
           <el-option
             v-for="dict in ckLocationCodeList"
             :key="dict.UserCode"
@@ -78,7 +78,7 @@
       append-to-body
       title="新建发货单明细"
       :visible.sync="innerVisible.innerAddVisible"
-      width="50%"
+      width="40%"
     >
       <el-form
         ref="addForm"
@@ -106,7 +106,6 @@
           <el-input
             v-model="addForm.batchNo"
             class="inline-input"
-            disabled
             style="width: 180px"
           />
         </el-form-item>
@@ -186,7 +185,7 @@
         },
         rules: {
           Destination: [
-            { required: true, trigger: 'blur', message: '请选择货主' },
+            { required: true, trigger: 'blur', message: '请选择出库口' },
           ],
           WaveType: [{ required: true, trigger: 'blur', message: '单据类型' }],
         },
@@ -319,8 +318,13 @@
         }
       },
       async GetUnitLoadListMethod() {
-        const res = await GetUnitLoadListApi()
-        if (res.code == 200) {
+        debugger
+        if (this.addForm.number > this.addForm.SumNumber) {
+          this.$message.error('出库数量不能大于库存总数!')
+          return
+        }
+        const res = await GetUnitLoadListApi(this.addForm)
+        if (res.code === 200) {
           this.childrenList = res.data.list
         } else {
           this.childrenList = []
