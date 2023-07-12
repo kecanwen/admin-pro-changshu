@@ -27,7 +27,6 @@
       handleLoad() {
         let beforeTime = JSON.parse(localStorage.getItem('beforeTime'))
         let _gap_time = new Date().getTime() - beforeTime
-        console.log(_gap_time, '间隔时间')
         if (_gap_time > 5000) {
           localStorage.removeItem('admin-pro-token')
         }
@@ -35,12 +34,11 @@
       handleUnload() {
         let beforeTime = new Date().getTime()
         localStorage.setItem('beforeTime', JSON.stringify(beforeTime))
-        console.log(beforeTime, '结束时间')
       },
       //超30分钟不操作 退出登陆
       watchScreenActive() {
         let curStamp = new Date().getTime()
-        let gap = curStamp - this.lastClickTime
+        let gap = this.lastClickTime ? curStamp - this.lastClickTime : 0
         if (gap < 30 * 60 * 1000) {
           this.lastClickTime = new Date().getTime()
         } else {
