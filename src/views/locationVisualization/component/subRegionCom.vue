@@ -133,14 +133,17 @@
                   @click.passive="getReferenceDetail(item1.UserCode)"
                 >
                   <img
+                    style="z-index: 1"
                     v-if="item1.ForbidInbound || item1.ForbidOutbound"
                     src="../../../assets/stock_images/forbidden.png"
                   />
                   <img
+                    style="z-index: 2"
                     v-if="item1.IsLoaded"
                     src="../../../assets/stock_images/box.png"
                   />
                   <img
+                    style="z-index: 3"
                     v-if="item1.IsLocked"
                     src="../../../assets/stock_images/lock.png"
                   />
@@ -463,6 +466,8 @@
                 border: 1px solid #ccc;
                 border-radius: 4px;
                 img {
+                  position: absolute;
+                  left: 0;
                   width: 26px;
                   height: 25px;
                 }
