@@ -133,19 +133,19 @@
                   @click.passive="getReferenceDetail(item1.UserCode)"
                 >
                   <img
-                    style="z-index: 1"
                     v-if="item1.ForbidInbound || item1.ForbidOutbound"
                     src="../../../assets/stock_images/forbidden.png"
+                    style="z-index: 1"
                   />
                   <img
-                    style="z-index: 2"
                     v-if="item1.IsLoaded"
                     src="../../../assets/stock_images/box.png"
+                    style="z-index: 2"
                   />
                   <img
-                    style="z-index: 3"
                     v-if="item1.IsLocked"
                     src="../../../assets/stock_images/lock.png"
+                    style="z-index: 3"
                   />
                 </div>
               </el-popover>
