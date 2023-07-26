@@ -8,6 +8,22 @@ export function getList(params) {
   })
 }
 
+export function getMenuTrees(params) {
+  return request({
+    url: '/Roles/MenuTrees',
+    method: 'get',
+    params,
+  })
+}
+
+export function setDoAllots(data) {
+  return request({
+    url: '/Roles/DoAllots',
+    method: 'post',
+    data,
+  })
+}
+
 export function doEdit(data) {
   return request({
     url: '/Roles/AddOrUpdate',
