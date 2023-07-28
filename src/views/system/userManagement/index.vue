@@ -70,7 +70,6 @@
         <template #default="{ row }">
           <el-button type="text" @click="handleEdit(row)">编辑</el-button>
           <el-button type="text" @click="handleRoles(row)">设置角色</el-button>
-          <el-button type="text" @click="handleMenu(row)">分配菜单</el-button>
           <el-button type="text" @click="handleDelete(row)">删除</el-button>
         </template>
       </el-table-column>
@@ -92,19 +91,17 @@
     />
     <edit ref="edit" @fetch-data="fetchData" />
     <role ref="role" @fetch-data="fetchData" />
-    <UserMenu ref="userMenu" />
   </div>
 </template>
 
 <script>
   import { doDelete, getList } from '@/api/userManagement'
   import Edit from './components/UserManagementEdit'
-  import Role from './components/UserRoles'
-  import UserMenu from '@/views/system/userManagement/components/userMenu.vue'
+  import Role from '../userManagement/components/UserRoles'
 
   export default {
     name: 'UserManagement',
-    components: { UserMenu, Edit, Role },
+    components: { Edit, Role },
     data() {
       return {
         list: [],
@@ -132,11 +129,6 @@
         } else {
           this.$refs['edit'].showEdit()
         }
-      },
-      handleMenu(row) {
-        row.Id
-          ? this.$refs['userMenu'].showEdit(row)
-          : this.$baseMessage('未选中任何行', 'error', 'vab-hey-message-error')
       },
       handleRoles(row) {
         if (row.Id) {

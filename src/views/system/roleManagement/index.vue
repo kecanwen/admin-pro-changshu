@@ -70,11 +70,12 @@
         align="center"
         label="操作"
         show-overflow-tooltip
-        width="85"
+        width="145"
       >
         <template #default="{ row }">
           <el-button type="text" @click="handleEdit(row)">编辑</el-button>
           <el-button type="text" @click="handleDelete(row)">删除</el-button>
+          <el-button type="text" @click="handleMenu(row)">分配菜单</el-button>
         </template>
       </el-table-column>
       <template #empty>
@@ -94,16 +95,18 @@
       @size-change="handleSizeChange"
     />
     <edit ref="edit" @fetch-data="fetchData" />
+    <UserMenu ref="userMenu" />
   </div>
 </template>
 
 <script>
   import { doDelete, getList } from '@/api/roleManagement'
   import Edit from './components/RoleManagementEdit'
+  import UserMenu from './components/userMenu'
 
   export default {
     name: 'RoleManagement',
-    components: { Edit },
+    components: { Edit, UserMenu },
     data() {
       return {
         list: [],
@@ -131,6 +134,11 @@
         } else {
           this.$refs['edit'].showEdit()
         }
+      },
+      handleMenu(row) {
+        row.Id
+          ? this.$refs['userMenu'].showEdit(row)
+          : this.$baseMessage('未选中任何行', 'error', 'vab-hey-message-error')
       },
       handleDelete(row) {
         if (row.Id) {
