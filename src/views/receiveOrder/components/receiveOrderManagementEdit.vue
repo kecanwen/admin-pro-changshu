@@ -162,7 +162,6 @@
   import {
     Add0rUpdateAPI,
     getLikeMaterialsList,
-    DeleteReceiveOrderItems,
     getCargoOwnerOptionsApi,
   } from '@/api/receiveOrderManagement'
 
@@ -309,7 +308,9 @@
         })
       },
       itemsDelete(row) {
-        DeleteReceiveOrderItems({ id: row.Id })
+        this.childrenList = this.childrenList.filter((item) => {
+          return item.id !== row.id
+        })
         this.$emit('fetch-data')
       },
       async querySearch(queryString, cb) {
