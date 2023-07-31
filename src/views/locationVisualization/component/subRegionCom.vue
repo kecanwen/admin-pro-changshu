@@ -156,9 +156,9 @@
     </div>
     <div class="colorContent">
       <ul>
-        <li v-for="(item, index) in colorList" :key="index">
-          <span class="name">{{ item.name }}</span>
-          <span class="color" :style="{ background: item.color }"></span>
+        <li v-for="(item, index) in materialsTypeList" :key="index">
+          <span class="name">{{ item.Name }}</span>
+          <span class="color" :style="{ background: item.Color }"></span>
         </li>
       </ul>
     </div>
@@ -209,28 +209,6 @@
           { index: '08', text: '第8排' },
         ],
         isDisabled: true,
-        colorList: [
-          { name: '砂芯材料', color: 'rgba(153,255,204)', code: 'SXCL' },
-          { name: '孕育剂成品', color: 'rgba(204,193,218)', code: 'YYJCP' },
-          { name: '发热剂成品', color: 'rgba(255,255,0)', code: 'FRJCP' },
-          { name: '熔剂成品', color: 'rgba(217,150,148)', code: 'RJCP' },
-          { name: '冒口成品', color: 'rgba(230,185,184)', code: 'MKCP' },
-          { name: 'Premix半成品', color: 'rgba(204,204,255)', code: 'Premix' },
-          {
-            name: 'Pre-kitting预配料',
-            color: 'rgb(255,33,40)',
-            code: 'Pre-kitting',
-          },
-          {
-            name: '砂芯原料',
-            color: 'rgba(230,224,236)',
-            code: 'SXYL',
-          },
-          { name: '孕育剂原料', color: 'rgba(102,204,255)', code: 'YYJYL' },
-          { name: '熔剂原料', color: 'rgba(185,205,229)', code: 'RJYL' },
-          { name: '冒口&涂料原料', color: 'rgb(80,255,127)', code: 'MKTLYL' },
-          { name: '空托盘', color: 'rgba(230,185,184)', code: 'KTP' },
-        ],
       }
     },
     computed: {
@@ -244,11 +222,11 @@
     },
     methods: {
       computedBackground(item) {
-        let arr = this.colorList.filter((ite) => {
-          return ite.name === item.Group && this.form.partition === item.Group
+        let arr = this.materialsTypeList.filter((ite) => {
+          return ite.Name === item.Group && this.form.partition === item.Group
         })
         if (this.form.partition) {
-          return arr.length > 0 ? arr[0].color : '#fff'
+          return arr.length > 0 ? arr[0].Color : '#fff'
         } else {
           return '#fff'
         }
