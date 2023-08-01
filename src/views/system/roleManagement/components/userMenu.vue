@@ -48,16 +48,20 @@
       },
       getDefaultCheckedNode(treeList) {
         let checkArr = []
-        treeList.forEach((item) => {
-          if (item.children) {
-            this.getDefaultCheckedNode(item.children)
-          }
-          if (item.checked) {
-            checkArr.push(item.id)
-          }
-        })
+        const getCheckList = (list) => {
+          list.forEach((item) => {
+            if (item.checked) {
+              checkArr.push(item.id)
+            }
+            if (item.children) {
+              getCheckList(item.children)
+            }
+          })
+        }
+        getCheckList(treeList)
         return checkArr
       },
+
       async fetchData(id) {
         let params = { id }
         let { data } = await getMenuTrees(params)
