@@ -309,7 +309,7 @@
       },
       itemsDelete(row) {
         this.childrenList = this.childrenList.filter((item) => {
-          return item.id !== row.id
+          return item.Id !== row.Id
         })
         this.$emit('fetch-data')
       },
