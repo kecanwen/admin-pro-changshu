@@ -23,7 +23,7 @@
             <el-input
               v-model.trim="queryForm.materialsName"
               clearable
-              placeholder="请输入仓库名"
+              placeholder="请输入物料代码或名称"
             />
           </el-form-item>
           <el-form-item>
@@ -64,6 +64,7 @@
       <el-table-column align="center" label="物料类别" prop="Type" />
       <el-table-column align="center" label="单层数量" prop="ShortName" />
       <el-table-column align="center" label="单层高度" prop="Barcode" />
+      <el-table-column align="center" label="单个重量" prop="SingleWeight" />
       <el-table-column
         align="center"
         label="创建时间"
@@ -132,6 +133,7 @@
       },
       handleEdit(row) {
         if (row.Id) {
+          debugger
           this.$refs['edit'].showEdit(row)
         } else {
           this.$refs['edit'].showEdit()

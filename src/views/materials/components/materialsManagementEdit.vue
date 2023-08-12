@@ -36,6 +36,9 @@
       <el-form-item label="单层高度" prop="Barcode">
         <el-input v-model.trim="form.Barcode" />
       </el-form-item>
+      <el-form-item label="单个重量" prop="SingleWeight">
+        <el-input v-model.trim="form.SingleWeight" />
+      </el-form-item>
       <el-form-item label="备注" prop="Comments">
         <el-input v-model.trim="form.Comments" />
       </el-form-item>
@@ -94,12 +97,12 @@
         this.form = this.$options.data().form
         this.dialogFormVisible = false
       },
-      save() {
+      async save() {
         this.$refs['form'].validate(async (valid) => {
           if (valid) {
             const { msg } = await doEdit(this.form)
             this.$baseMessage(msg, 'success', 'vab-hey-message-success')
-            this.$emit('fetch-data')
+            // this.$emit('fetch-data')
             this.close()
           }
         })

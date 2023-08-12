@@ -7,7 +7,7 @@
     @size-change="handleSizeChange"
   >
     <el-form ref="form" inline label-width="80px" :model="form">
-      <el-form-item label="配方名称" prop="Name">
+      <el-form-item v-if="false" label="配方名称" prop="Name">
         <el-input v-model.trim="form.Name" placeholder="请输入配方名称" />
       </el-form-item>
     </el-form>
@@ -22,6 +22,8 @@
       @selection-change="selectionChange"
     >
       <el-table-column type="selection" width="55" />
+      <el-table-column align="center" label="物流口 " prop="Location" />
+      <el-table-column align="center" label="优先级 " prop="Seq" />
       <el-table-column align="center" label="库位 " prop="CurrentLocation" />
       <el-table-column align="center" label="托盘号 " prop="ContainerCode" />
       <el-table-column align="center" label="物料代码" prop="MaterialCode" />
@@ -42,23 +44,24 @@
     </el-row>
     <el-dialog
       append-to-body
-      title="新建出库配方明细"
+      title="新建配方明细"
       :visible.sync="innerVisible.innerAddVisible"
       width="30%"
     >
       <el-form
         ref="addForm"
+        :inline="true"
         label-width="140px"
         :model="addForm"
         :rules="addRules"
       >
-        <el-form-item label="配方" prop="SellOrderCode">
-          <el-select v-model="addForm.SellOrderCode" placeholder="请选择配方">
+        <el-form-item label="配方：" prop="Code">
+          <el-select v-model="addForm.Code" placeholder="请选择">
             <el-option
               v-for="dict in ckLocationCodeList"
-              :key="dict.UserCode"
+              :key="dict.Code"
               :label="dict.Name"
-              :value="dict.UserCode"
+              :value="dict.Code"
             />
           </el-select>
         </el-form-item>
@@ -100,11 +103,9 @@
           TrusteeBy: '',
           items: [],
         },
-        addForm: {},
+        addForm: { SellOrderCode: '' },
         addRules: {
-          SellOrderCode: [
-            { required: true, trigger: 'change', message: '请选择配方' },
-          ],
+          Code: [{ required: true, trigger: 'blur', message: '请选择配方' }],
         },
         title: '',
         dialogFormVisible: false,
@@ -217,10 +218,6 @@
         }
       },
       async GetUnitLoadListMethod() {
-        if (this.addForm.number > this.addForm.SumNumber) {
-          this.$message.error('出库数量不能大于库存总数!')
-          return
-        }
         const res = await GetUnitLoadListApi(this.addForm)
         if (res.code === 200) {
           this.childrenList = res.data.list

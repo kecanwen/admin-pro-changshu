@@ -40,6 +40,11 @@
             <el-table-column v-if="false" align="center" label="Id" prop="Id" />
             <el-table-column
               align="center"
+              label="物流口"
+              prop="ExitsLocation"
+            />
+            <el-table-column
+              align="center"
               label="托盘号"
               prop="ContainerCode"
             />

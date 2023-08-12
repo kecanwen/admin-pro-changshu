@@ -97,7 +97,7 @@
       <el-table-column align="center" label="入库类型" prop="ReceiveType" />
       <el-table-column align="center" label="状态" prop="Status" />
       <el-table-column align="center" label="托盘号" prop="PalletNo" />
-      <el-table-column align="center" label="供应商" prop="Supplier" />
+      <!-- <el-table-column align="center" label="供应商" prop="Supplier" /> -->
       <el-table-column align="center" label="创建人 " prop="CreatedBy" />
       <el-table-column
         align="center"
