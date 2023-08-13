@@ -25,7 +25,7 @@ module.exports = {
     disableHostCheck: true,
     proxyTable: {
       '/api': {
-        target: 'http://120.210.205.177:83',
+        target: 'http://10.160.58.3:83',
         changeOrigin: true,
         pathRewrite: {
           '^.api': '/',

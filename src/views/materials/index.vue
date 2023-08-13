@@ -16,6 +16,16 @@
         >
           批量删除
         </el-button>
+        <el-upload
+          action=""
+          :auto-upload="false"
+          class="upload-demo"
+          :limit="1"
+          multiple
+          :on-change="handleFileChange"
+        >
+          <el-button size="small" type="primary">导入</el-button>
+        </el-upload>
       </vab-query-form-left-panel>
       <vab-query-form-right-panel :span="12">
         <el-form :inline="true" :model="queryForm" @submit.native.prevent>
@@ -105,6 +115,7 @@
 <script>
   import { doDelete, getList } from '@/api/materialsManagement'
   import Edit from './components/materialsManagementEdit'
+  import XLSX from 'xlsx'
 
   export default {
     name: 'MaterialsManagement',
@@ -127,6 +138,22 @@
       this.fetchData()
     },
     methods: {
+      handleFileChange(file) {
+        console.log(file, 'file________')
+        const reader = new FileReader()
+
+        reader.onload = (e) => {
+          const data = new Uint8Array(e.target.result)
+          const workbook = XLSX.read(data, { type: 'array' })
+          const sheetName = workbook.SheetNames[0]
+          const worksheet = workbook.Sheets[sheetName]
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 })
+
+          // 处理导入的 Excel 数据
+          console.log(jsonData)
+        }
+        reader.readAsArrayBuffer(file.raw)
+      },
       setSelectRows(val) {
         this.selectRows = val
       },

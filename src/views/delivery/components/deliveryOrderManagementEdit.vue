@@ -318,7 +318,6 @@
         }
       },
       async GetUnitLoadListMethod() {
-        debugger
         if (this.addForm.number > this.addForm.SumNumber) {
           this.$message.error('出库数量不能大于库存总数!')
           return
