@@ -74,12 +74,12 @@
         prop="CreatedAt"
         width="160"
       />
-      <el-table-column
+      <!-- <el-table-column
         align="center"
         label="下发时间"
         prop="SentToWcsAt"
         width="160"
-      />
+      /> -->
       <el-table-column
         align="center"
         label="完成时间"

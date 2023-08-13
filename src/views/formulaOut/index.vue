@@ -1,7 +1,7 @@
 <template>
   <div class="receiveOrder-management-container">
     <vab-query-form>
-      <!-- <vab-query-form-left-panel :span="12">
+      <vab-query-form-left-panel :span="12">
         <el-button
           icon="el-icon-plus"
           type="primary"
@@ -9,14 +9,14 @@
         >
           添加
         </el-button>
-      </vab-query-form-left-panel> -->
-      <vab-query-form-right-panel :span="24">
+      </vab-query-form-left-panel>
+      <vab-query-form-right-panel :span="12">
         <el-form :inline="true" :model="queryForm" @submit.native.prevent>
           <el-form-item>
             <el-input
-              v-model.trim="queryForm.materialsName"
+              v-model.trim="queryForm.CodeToMatch"
               clearable
-              placeholder="请输入仓库名"
+              placeholder="请输入出库单号"
             />
           </el-form-item>
           <el-form-item>
@@ -29,8 +29,6 @@
     </vab-query-form>
 
     <el-table v-loading="listLoading" border :data="list">
-      <!-- <el-table-column align="center" show-overflow-tooltip type="selection" /> -->
-      <!-- 嵌套表格 -->
       <el-table-column type="expand">
         <template slot-scope="scope">
           <el-table
@@ -40,6 +38,21 @@
             style="width: 100%"
           >
             <el-table-column v-if="false" align="center" label="Id" prop="Id" />
+            <el-table-column
+              align="center"
+              label="物流口"
+              prop="ExitsLocation"
+            />
+            <el-table-column
+              align="center"
+              label="托盘号"
+              prop="ContainerCode"
+            />
+            <el-table-column
+              align="center"
+              label="库位号"
+              prop="CurrentLocation"
+            />
             <el-table-column
               align="center"
               label="物料编码"
@@ -52,7 +65,7 @@
             />
             <el-table-column align="center" label="单位" prop="smallestUnit" />
             <el-table-column align="center" label="物料类型" prop="type" />
-            <el-table-column align="center" label="入库数量" prop="number" />
+            <el-table-column align="center" label="出库数量" prop="number" />
           </el-table>
         </template>
       </el-table-column>
@@ -62,11 +75,9 @@
         </template>
       </el-table-column>
       <el-table-column v-if="false" align="center" label="Id" prop="Id" />
-      <el-table-column align="center" label="入库单号 " prop="Code" />
-      <el-table-column align="center" label="入库类型" prop="ReceiveType" />
+      <el-table-column align="center" label="出库单号 " prop="Code" />
+      <el-table-column align="center" label="出库类型" prop="WaveType" />
       <el-table-column align="center" label="状态" prop="Status" />
-      <el-table-column align="center" label="托盘号" prop="PalletNo" />
-      <el-table-column align="center" label="供应商" prop="Supplier" />
       <el-table-column align="center" label="创建人 " prop="CreatedBy" />
       <el-table-column align="center" label="创建时间" prop="CreatedAt" />
 
@@ -77,8 +88,8 @@
         width="150"
       >
         <template #default="{ row }">
-          <el-button type="text" @click="handleEdit(row)">上架</el-button>
-          <!-- <el-button type="text" @click="handleDelete(row)">上架</el-button> -->
+          <el-button type="text" @click="handleEdit(row)">编辑</el-button>
+          <el-button type="text" @click="handleDelete(row)">删除</el-button>
         </template>
       </el-table-column>
       <template #empty>
@@ -102,11 +113,11 @@
 </template>
 
 <script>
-  import { doDelete, getList } from '@/api/receiveOrderManagement'
-  import Edit from './components/groundingEdit'
+  import { doDelete, getList } from '@/api/formulaOutManagement'
+  import Edit from './components/formulaOutManagementEdit'
 
   export default {
-    name: 'ReceiveOrderManagement',
+    name: 'FormulaOutManagement',
     components: { Edit },
     data() {
       return {
@@ -118,7 +129,7 @@
         queryForm: {
           pageNo: 1,
           pageSize: 10,
-          materialsName: '',
+          CodeToMatch: '',
         },
       }
     },
@@ -131,9 +142,9 @@
       },
       handleEdit(row) {
         if (row.Id) {
-          if (row.Status == '完成') {
+          if (row.Status == '分配完成') {
             this.$baseMessage(
-              '该单据已完成,无法上架',
+              '该单据已完成,无法编辑',
               'error',
               'vab-hey-message-error'
             )
@@ -146,22 +157,19 @@
       },
       handleDelete(row) {
         if (row.Id) {
-          this.$baseConfirm('你确定要上架当前项吗', null, async () => {
-            const { msg } = await doDelete({ ids: row.Id })
+          if (row.Status == '分配完成') {
+            this.$baseMessage(
+              '该单据已完成,无法删除',
+              'error',
+              'vab-hey-message-error'
+            )
+            return
+          }
+          this.$baseConfirm('你确定要删除当前项吗', null, async () => {
+            const { msg } = await doDelete({ id: row.Id })
             this.$baseMessage(msg, 'success', 'vab-hey-message-success')
             await this.fetchData()
           })
-        } else {
-          if (this.selectRows.length > 0) {
-            const ids = this.selectRows.map((item) => item.Id).join()
-            this.$baseConfirm('你确定要上架选中项吗', null, async () => {
-              const { msg } = await doDelete({ ids })
-              this.$baseMessage(msg, 'success', 'vab-hey-message-success')
-              await this.fetchData()
-            })
-          } else {
-            this.$baseMessage('未选中任何行', 'error', 'vab-hey-message-error')
-          }
         }
       },
       handleSizeChange(val) {

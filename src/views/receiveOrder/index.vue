@@ -97,7 +97,7 @@
       <el-table-column align="center" label="入库类型" prop="ReceiveType" />
       <el-table-column align="center" label="状态" prop="Status" />
       <el-table-column align="center" label="托盘号" prop="PalletNo" />
-      <el-table-column align="center" label="供应商" prop="Supplier" />
+      <!-- <el-table-column align="center" label="供应商" prop="Supplier" /> -->
       <el-table-column align="center" label="创建人 " prop="CreatedBy" />
       <el-table-column
         align="center"
@@ -167,6 +167,14 @@
       },
       handleEdit(row) {
         if (row.Id) {
+          if (row.Status == '完成') {
+            this.$baseMessage(
+              '该单据已完成,无法编辑',
+              'error',
+              'vab-hey-message-error'
+            )
+            return
+          }
           this.$refs['edit'].showEdit(row)
         } else {
           this.$refs['edit'].showEdit()
@@ -174,6 +182,14 @@
       },
       handleDelete(row) {
         if (row.Id) {
+          if (row.Status == '完成') {
+            this.$baseMessage(
+              '该单据已完成,无法删除',
+              'error',
+              'vab-hey-message-error'
+            )
+            return
+          }
           this.$baseConfirm('你确定要删除当前项吗', null, async () => {
             const { msg } = await doDelete({ ids: row.Id })
             this.$baseMessage(msg, 'success', 'vab-hey-message-success')

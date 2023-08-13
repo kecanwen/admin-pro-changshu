@@ -67,6 +67,12 @@
         prop="ToLocation"
         width="110"
       />
+      <el-table-column
+        align="center"
+        label="优先级"
+        prop="Priority"
+        width="110"
+      />
       <el-table-column align="center" label="巷道" prop="LanewayName" />
       <el-table-column
         align="center"
@@ -87,7 +93,7 @@
           <el-button type="text" @click="handleComplete(row)">
             强制完成
           </el-button>
-          <!-- <el-button type="text" @click="handleCancel(row)">取消任务</el-button> -->
+          <el-button type="text" @click="handleCancel(row)">取消任务</el-button>
           <!-- <el-button type="text" @click="handleEdit(row)">编辑任务</el-button>
           <el-button type="text" @click="handleDelete(row)">暂停任务</el-button> -->
         </template>
@@ -165,7 +171,7 @@
           this.$baseConfirm('你确定要操作当前项吗?', null, async () => {
             const { msg } = await doCancel({
               id: row.Id,
-              containerCode: row.ContainerCode,
+              // containerCode: row.ContainerCode,
             })
             this.$baseMessage(msg, 'success', 'vab-hey-message-success')
             this.fetchData()

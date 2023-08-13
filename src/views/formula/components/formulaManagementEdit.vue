@@ -7,35 +7,15 @@
     @size-change="handleSizeChange"
   >
     <el-form ref="form" inline label-width="80px" :model="form" :rules="rules">
-      <el-form-item disabled="" label="单据编号" prop="Code">
+      <el-form-item disabled="" label="配方编号" prop="Code">
         <el-input
           v-model.trim="form.Code"
           disabled
-          placeholder="入库单号自动生成"
+          placeholder="配方编号自动生成"
         />
       </el-form-item>
-      <el-form-item label="托盘号" prop="PalletNo">
-        <el-input v-model.trim="form.PalletNo" placeholder="请输入托盘号" />
-      </el-form-item>
-      <el-form-item label="单据类型" prop="ReceiveType">
-        <el-select v-model="form.ReceiveType" placeholder="请选择">
-          <el-option
-            v-for="item in documentTypeOptions"
-            :key="item.label"
-            :label="item.label"
-            :value="item.label"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="供应商" prop="Supplier">
-        <el-select v-model="form.Supplier" placeholder="请选择">
-          <el-option
-            v-for="dict in cargoOwnerOptions"
-            :key="dict.Code"
-            :label="dict.Name"
-            :value="dict.Name"
-          />
-        </el-select>
+      <el-form-item label="配方名称" prop="Name">
+        <el-input v-model.trim="form.Name" placeholder="请输入配方名称" />
       </el-form-item>
     </el-form>
     <template #footer>
@@ -44,14 +24,15 @@
     </template>
     <el-table border :data="childrenList">
       <el-table-column align="center" show-overflow-tooltip type="selection" />
-      <el-table-column align="center" label="序号" width="55">
+      <el-table-column v-if="false" align="center" label="序号" width="55">
         <template #default="{ $index }">
           {{ $index + 1 }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="物料编码" prop="materialsCode" />
       <el-table-column align="center" label="物料名称" prop="materialsName" />
-      <el-table-column align="center" label="收货数量 " prop="number" />
+      <el-table-column align="center" label="配方序号 " prop="seq" />
+      <el-table-column align="center" label="出库口 " prop="exitCode" />
       <el-table-column
         align="center"
         label="操作"
@@ -76,9 +57,9 @@
     </el-row>
     <el-dialog
       append-to-body
-      title="新建收货单明细"
+      title="新建配方明细"
       :visible.sync="innerVisible.innerAddVisible"
-      width="60%"
+      width="30%"
     >
       <el-form
         ref="addForm"
@@ -111,42 +92,23 @@
             disabled
           />
         </el-form-item>
-        <el-form-item label="批次号：" prop="batchNo">
-          <el-input v-model="addForm.batchNo" class="inline-input" />
-        </el-form-item>
-        <el-form-item label="单包重量：" prop="singleWeight">
-          <el-input v-model="addForm.singleWeight" class="inline-input" />
-        </el-form-item>
-        <el-form-item label="生产日期：" prop="produceDate">
-          <el-input v-model="addForm.produceDate" class="inline-input" />
-        </el-form-item>
-        <el-form-item label="有效期：" prop="validityDate">
-          <el-input v-model="addForm.validityDate" class="inline-input" />
-        </el-form-item>
-        <el-form-item label="尺寸：" prop="size">
-          <el-input v-model="addForm.size" class="inline-input" />
-        </el-form-item>
-        <el-form-item label="收货数量：" prop="number">
+        <el-form-item label="配方序号：" prop="seq">
           <el-input-number
-            v-model.trim="addForm.number"
+            v-model.trim="addForm.seq"
             controls-position="right"
-            :max="1000"
+            :max="10"
             :min="1"
           />
         </el-form-item>
-        <el-form-item label="入库时间：" prop="inTime">
-          <el-input
-            v-model.trim="addForm.inTime"
-            class="inline-input"
-            disabled
-          />
-        </el-form-item>
-        <el-form-item label="收货时间：" prop="inTime">
-          <el-input
-            v-model.trim="addForm.recivedTime"
-            class="inline-input"
-            disabled
-          />
+        <el-form-item label="出库口：" prop="exitCode">
+          <el-select v-model="addForm.exitCode" placeholder="请选择">
+            <el-option
+              v-for="dict in cargoOwnerOptions"
+              :key="dict.Code"
+              :label="dict.Name"
+              :value="dict.Name"
+            />
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -157,16 +119,16 @@
 </template>
 
 <script>
-  const dayjs = require('dayjs')
   import { mapGetters } from 'vuex'
   import {
     Add0rUpdateAPI,
     getLikeMaterialsList,
-    getCargoOwnerOptionsApi,
-  } from '@/api/receiveOrderManagement'
+    DeleteSellOrderItems,
+    getFormulaLocationCodeListApi,
+  } from '@/api/formulaManagement'
 
   export default {
-    name: 'GroundingEdit',
+    name: 'FormulaEdit',
     data() {
       return {
         queryString: '',
@@ -181,42 +143,28 @@
         form: {
           Id: '',
           CreatedBy: '',
-          TrusteeBy: '',
-          Code: '',
-          ReceiveType: '',
-          Supplier: '',
+          UpdatedBy: '',
+          Name: '',
           items: [],
         },
         cargoOwnerOptions: [],
-        documentTypeOptions: [
-          { label: '普通入库', value: 'PTRK' },
-          //{ label: '特殊入库', value: 'TSRK' },
-          //{ label: '空托盘入库', value: 'KTPRK' },
-        ],
         addForm: {
-          materialsName: '',
           materialsCode: '',
-          batchNo: '',
-          number: '',
-          inTime: '',
-          recivedTime: '',
+          seq: '',
         },
         addRules: {
           materialsName: [
             { required: true, trigger: 'blur', message: '请选择物料名称' },
           ],
-          number: [{ required: true, trigger: 'blur', message: '请输入数量' }],
+          seq: [{ required: true, trigger: 'blur', message: '请输入配方序号' }],
+          exitCode: [
+            { required: true, trigger: 'blur', message: '请选择出库口' },
+          ],
         },
         rules: {
-          PalletNo: [
-            { required: true, trigger: 'blur', message: '请输入托盘号' },
+          Name: [
+            { required: true, trigger: 'blur', message: '请输入配方名称' },
           ],
-          ReceiveType: [
-            { required: true, trigger: 'blur', message: '请选择单据类型' },
-          ],
-          // Supplier: [
-          //   { required: true, trigger: 'blur', message: '请选择供应商' },
-          // ],
         },
         title: '',
         dialogFormVisible: false,
@@ -229,7 +177,7 @@
       }),
     },
     created() {
-      this.getCargoOwnerOptions()
+      this.getFormulaLocationCode()
     },
     mounted() {},
     methods: {
@@ -256,7 +204,8 @@
         this.addForm = {
           materialsCode: '',
           materialsName: '',
-          number: '',
+          seq: '',
+          exitCode: '',
         }
         this.loadAll()
         this.innerVisible.innerAddVisible = true
@@ -267,10 +216,8 @@
           this.form = {
             Id: '',
             CreatedBy: '',
-            TrusteeBy: '',
-            Code: '',
-            ReceiveType: '',
-            Supplier: '',
+            UpdatedBy: '',
+            Name: '',
             items: [],
           }
           this.childrenList = []
@@ -287,10 +234,8 @@
         this.form = {
           Id: '',
           CreatedBy: '',
-          TrusteeBy: '',
-          Code: '',
-          ReceiveType: '',
-          Supplier: '',
+          UpdatedBy: '',
+          Name: '',
           items: [],
         }
         this.dialogFormVisible = false
@@ -299,6 +244,7 @@
         this.$refs['form'].validate(async (valid) => {
           if (valid) {
             this.form.CreatedBy = this.username
+            this.form.UpdatedBy = this.username
             this.form.items = [...this.childrenList]
             const { msg } = await Add0rUpdateAPI(this.form)
             this.$baseMessage(msg, 'success', 'vab-hey-message-success')
@@ -308,9 +254,7 @@
         })
       },
       itemsDelete(row) {
-        this.childrenList = this.childrenList.filter((item) => {
-          return item.Id !== row.Id
-        })
+        DeleteSellOrderItems({ id: row.Id })
         this.$emit('fetch-data')
       },
       async querySearch(queryString, cb) {
@@ -328,13 +272,11 @@
       },
       handleSelect(row) {
         let assignObj = Object.assign(this.addForm, { ...row })
-        let time = dayjs().format('YYYY-M-D HH:mm:ss')
-        assignObj.inTime = time
-        assignObj.recivedTime = time
+        //let time = dayjs().format('YYYY-M-D HH:mm:ss')
         this.addForm = assignObj
       },
-      async getCargoOwnerOptions() {
-        const res = await getCargoOwnerOptionsApi()
+      async getFormulaLocationCode() {
+        const res = await getFormulaLocationCodeListApi()
         if (res.code == 200) {
           this.cargoOwnerOptions = res.data.list
         } else {
