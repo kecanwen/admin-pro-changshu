@@ -7,7 +7,7 @@ module.exports = {
   // 问号后边代表开发环境，冒号后边代表生产环境
   baseURL:
     process.env.NODE_ENV === 'development'
-      ? 'http://localhost:7194/'
+      ? 'http://120.210.205.177:83/'
       : 'http://10.160.58.3:83/',
   // 'http://120.210.205.177:83/',
   // 配后端数据的接收方式application/json;charset=UTF-8 或 application/x-www-form-urlencoded;charset=UTF-8

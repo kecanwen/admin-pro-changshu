@@ -15,7 +15,7 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     host: '0.0.0.0',
-    port: 82,
+    port: 83,
     autoOpenBrowser: false,
     errorOverlay: true,
     notifyOnErrors: true,
@@ -25,8 +25,7 @@ module.exports = {
     disableHostCheck: true,
     proxyTable: {
       '/api': {
-        //target: 'http://10.160.58.3:83',
-        //target: 'http://10.160.58.3:83/',
+        target: 'http://120.210.205.177:83',
         changeOrigin: true,
         pathRewrite: {
           '^.api': '/',

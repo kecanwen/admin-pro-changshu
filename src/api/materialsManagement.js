@@ -8,6 +8,14 @@ export function getList(params) {
   })
 }
 
+export function UploadExcel(data) {
+  return request({
+    url: '/Materials/UploadExcel',
+    method: 'post',
+    data,
+  })
+}
+
 export function doEdit(data) {
   return request({
     url: '/Materials/AddOrUpdate',

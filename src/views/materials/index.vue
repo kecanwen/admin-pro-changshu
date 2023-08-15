@@ -16,16 +16,26 @@
         >
           批量删除
         </el-button>
-        <el-upload
-          action=""
-          :auto-upload="false"
-          class="upload-demo"
-          :limit="1"
-          multiple
-          :on-change="handleFileChange"
-        >
-          <el-button size="small" type="primary">导入</el-button>
-        </el-upload>
+        <el-button type="primary">
+          <div style="position: relative">
+            <span style="position: absolute; left: 12px">导入</span>
+            <input
+              ref="importFile"
+              accept=".xlsx, .xls"
+              style="opacity: 0; width: 80px; height: 12px"
+              type="file"
+              @change="onImportExcel"
+            />
+          </div>
+        </el-button>
+        <!--        <el-button icon="el-icon-plus" type="primary">-->
+        <!--          <a-->
+        <!--            download="../../assets/excel/物料.xlsx"-->
+        <!--            href="../../assets/excel/物料.xlsx"-->
+        <!--          >-->
+        <!--            导出模板-->
+        <!--          </a>-->
+        <!--        </el-button>-->
       </vab-query-form-left-panel>
       <vab-query-form-right-panel :span="12">
         <el-form :inline="true" :model="queryForm" @submit.native.prevent>
@@ -114,7 +124,7 @@
 </template>
 
 <script>
-  import { doDelete, getList } from '@/api/materialsManagement'
+  import { doDelete, getList, UploadExcel } from '@/api/materialsManagement'
   import Edit from './components/materialsManagementEdit'
   import XLSX from 'xlsx'
 
@@ -139,21 +149,44 @@
       this.fetchData()
     },
     methods: {
-      handleFileChange(file) {
-        console.log(file, 'file________')
-        const reader = new FileReader()
-
-        reader.onload = (e) => {
-          const data = new Uint8Array(e.target.result)
-          const workbook = XLSX.read(data, { type: 'array' })
-          const sheetName = workbook.SheetNames[0]
-          const worksheet = workbook.Sheets[sheetName]
-          const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 })
-
-          // 处理导入的 Excel 数据
-          console.log(jsonData)
+      onImportExcel(file) {
+        // 获取上传的文件对象
+        const { files } = file.target
+        // 通过FileReader对象读取文件
+        const fileReader = new FileReader()
+        fileReader.onload = (event) => {
+          try {
+            const { result } = event.target
+            // 以二进制流方式读取得到整份excel表格对象
+            const workbook = XLSX.read(result, { type: 'binary' })
+            // 存储获取到的数据
+            let data = []
+            // 遍历每张工作表进行读取（这里默认只读取第一张表）
+            for (const sheet in workbook.Sheets) {
+              data = data.concat(
+                XLSX.utils.sheet_to_json(workbook.Sheets[sheet])
+              )
+            }
+            // 最终获取到并且格式化后的 json 数据
+            const uploadData = data.map((item) => {
+              return {
+                Code: item['物料代码'],
+                Name: item['物料名称'],
+                Type: item['物料类别'],
+              }
+            })
+            console.log(uploadData) //这里得到了后端需要的json数据，调用接口传给后端就行了
+            this.UploadExcelMethod(uploadData)
+          } catch (e) {
+            // 这里可以抛出文件类型错误不正确的相关提示
+          }
         }
-        reader.readAsArrayBuffer(file.raw)
+        // 以二进制方式打开文件
+        fileReader.readAsBinaryString(files[0])
+      },
+      async UploadExcelMethod(filebase) {
+        let aaa = await UploadExcel({ filebase })
+        console.log(aaa, '_______')
       },
       setSelectRows(val) {
         this.selectRows = val
