@@ -126,7 +126,6 @@
 <script>
   import { doDelete, getList, UploadExcel } from '@/api/materialsManagement'
   import Edit from './components/materialsManagementEdit'
-  import XLSX from 'xlsx'
 
   export default {
     name: 'MaterialsManagement',
@@ -150,43 +149,16 @@
     },
     methods: {
       onImportExcel(file) {
+        debugger
         // 获取上传的文件对象
-        const { files } = file.target
-        // 通过FileReader对象读取文件
-        const fileReader = new FileReader()
-        fileReader.onload = (event) => {
-          try {
-            const { result } = event.target
-            // 以二进制流方式读取得到整份excel表格对象
-            const workbook = XLSX.read(result, { type: 'binary' })
-            // 存储获取到的数据
-            let data = []
-            // 遍历每张工作表进行读取（这里默认只读取第一张表）
-            for (const sheet in workbook.Sheets) {
-              data = data.concat(
-                XLSX.utils.sheet_to_json(workbook.Sheets[sheet])
-              )
-            }
-            // 最终获取到并且格式化后的 json 数据
-            const uploadData = data.map((item) => {
-              return {
-                Code: item['物料代码'],
-                Name: item['物料名称'],
-                Type: item['物料类别'],
-              }
-            })
-            console.log(uploadData) //这里得到了后端需要的json数据，调用接口传给后端就行了
-            this.UploadExcelMethod(uploadData)
-          } catch (e) {
-            // 这里可以抛出文件类型错误不正确的相关提示
-          }
-        }
-        // 以二进制方式打开文件
-        fileReader.readAsBinaryString(files[0])
+        const files = file.target && file.target.files[0]
+        const fd = new FormData()
+        fd.append('file', files)
+        this.UploadExcelMethod(fd)
       },
-      async UploadExcelMethod(filebase) {
-        let aaa = await UploadExcel({ filebase })
-        console.log(aaa, '_______')
+      async UploadExcelMethod(fd) {
+        let { msg } = await UploadExcel(fd)
+        this.$baseMessage(msg, 'success', 'vab-hey-message-success')
       },
       setSelectRows(val) {
         this.selectRows = val

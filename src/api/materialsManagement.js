@@ -11,6 +11,10 @@ export function getList(params) {
 export function UploadExcel(data) {
   return request({
     url: '/Materials/UploadExcel',
+    headers: {
+      'Content-Type':
+        'multipart/form-data; boundary=----WebKitFormBoundarynl6gT1BKdPWIejNq',
+    },
     method: 'post',
     data,
   })
