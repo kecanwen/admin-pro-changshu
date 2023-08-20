@@ -149,11 +149,10 @@
     },
     methods: {
       onImportExcel(file) {
-        debugger
         // 获取上传的文件对象
         const files = file.target && file.target.files[0]
         const fd = new FormData()
-        fd.append('file', files)
+        fd.append('File', files)
         this.UploadExcelMethod(fd)
       },
       async UploadExcelMethod(fd) {
