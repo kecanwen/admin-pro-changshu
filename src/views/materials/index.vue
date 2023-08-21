@@ -16,13 +16,13 @@
         >
           批量删除
         </el-button>
-        <el-button type="primary">
+        <el-button style="padding: 0 !important" type="primary">
           <div style="position: relative">
-            <span style="position: absolute; left: 12px">导入</span>
+            <span style="position: absolute; left: 40px; top: 8px">导入</span>
             <input
               ref="importFile"
               accept=".xlsx, .xls"
-              style="width: 40px; height: 12px; opacity: 0"
+              style="width: 96px; height: 30px; opacity: 0"
               type="file"
               @change="onImportExcel"
             />
