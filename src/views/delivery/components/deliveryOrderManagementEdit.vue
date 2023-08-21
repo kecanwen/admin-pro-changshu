@@ -78,7 +78,7 @@
       append-to-body
       title="新建发货单明细"
       :visible.sync="innerVisible.innerAddVisible"
-      width="40%"
+      width="50%"
     >
       <el-form
         ref="addForm"
@@ -92,6 +92,7 @@
             class="inline-input"
             :fetch-suggestions="querySearch"
             placeholder="请输入内容"
+            style="width: 360px"
             value-key="materialsName"
             @select="handleSelect"
           />
@@ -167,7 +168,10 @@
           items: [],
         },
         TradingCompanys: [],
-        documentTypeOptions: [{ label: '普通出库', value: 'PTCK' }],
+        documentTypeOptions: [
+          { label: '普通出库', value: 'PTCK' },
+          { label: '成品出库', value: 'CPCK' },
+        ],
         addForm: {
           materialsName: '',
           materialsCode: '',

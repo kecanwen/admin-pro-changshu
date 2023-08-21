@@ -1,38 +1,62 @@
 <template>
   <div class="unitLoads-management-container">
     <vab-query-form>
-      <!-- <vab-query-form-left-panel :span="12">
-        <el-button
-          icon="el-icon-plus"
-          type="primary"
-          @click="handleEdit($event)"
+      <vab-query-form-top-panel>
+        <el-form
+          ref="form"
+          :inline="true"
+          label-width="70px"
+          :model="queryForm"
+          @submit.native.prevent
         >
-          添加
-        </el-button>
-        <el-button
-          icon="el-icon-delete"
-          type="danger"
-          @click="handleDelete($event)"
-        >
-          批量删除
-        </el-button>
-      </vab-query-form-left-panel> -->
-      <vab-query-form-right-panel :span="12">
-        <el-form :inline="true" :model="queryForm" @submit.native.prevent>
-          <el-form-item>
+          <el-form-item label="物料">
             <el-input
-              v-model.trim="queryForm.materialsName"
+              v-model="queryForm.MaterialCode"
               clearable
-              placeholder="请输入仓库名"
+              placeholder="请输入物料编码或名称"
             />
           </el-form-item>
+          <el-form-item label="批次号">
+            <el-input
+              v-model="queryForm.BatchNo"
+              clearable
+              placeholder="请输入批次号"
+            />
+          </el-form-item>
+          <el-form-item label="生产日期">
+            <el-input
+              v-model="queryForm.ProduceDate"
+              clearable
+              placeholder="请输入生产日期"
+            />
+          </el-form-item>
+
           <el-form-item>
-            <el-button icon="el-icon-search" type="primary" @click="queryData">
+            <el-button
+              icon="el-icon-search"
+              native-type="submit"
+              type="primary"
+              @click="queryData"
+            >
               查询
             </el-button>
+            <el-form-item>
+              <el-button type="primary" @click="handleDownload">
+                导出 Excel
+              </el-button>
+            </el-form-item>
+            <!-- <el-button type="text" @click="handleFold">
+              <span v-if="fold">展开</span>
+              <span v-else>合并</span>
+              <vab-icon
+                class="vab-dropdown"
+                :class="{ 'vab-dropdown-active': fold }"
+                icon="arrow-up-s-line"
+              />
+            </el-button> -->
           </el-form-item>
         </el-form>
-      </vab-query-form-right-panel>
+      </vab-query-form-top-panel>
     </vab-query-form>
 
     <el-table v-loading="listLoading" border :data="list">
@@ -54,19 +78,7 @@
         prop="CurrentLocation"
         width="150"
       />
-      <el-table-column
-        v-if="false"
-        align="center"
-        label="供应商 "
-        prop="Supplier"
-        width="130"
-      />
-      <el-table-column
-        align="center"
-        label="容器编码 "
-        prop="ContainerCode"
-        width="110"
-      />
+
       <el-table-column
         v-if="false"
         align="center"
@@ -86,22 +98,34 @@
         prop="MaterialName"
         width="160"
       />
-      <el-table-column align="center" label="数量" prop="number" />
+      <el-table-column align="center" label="数量" prop="Number" />
       <el-table-column align="center" label="批次" prop="BatchNo" width="150" />
       <el-table-column
         align="center"
-        label="单包重量"
-        prop="Str1"
+        label="生产日期"
+        prop="ProduceDate"
         width="150"
       />
       <el-table-column
         align="center"
-        label="生产日期"
-        prop="Str2"
+        label="容器编码 "
+        prop="ContainerCode"
+        width="110"
+      />
+      <el-table-column
+        align="center"
+        label="单包重量"
+        prop="SingleWeight"
         width="150"
       />
-      <el-table-column align="center" label="有效期" prop="Str3" width="150" />
-      <el-table-column align="center" label="尺寸" prop="Str4" width="150" />
+
+      <el-table-column
+        align="center"
+        label="有效期"
+        prop="EffectiveDate"
+        width="150"
+      />
+      <el-table-column align="center" label="尺寸" prop="ChiCun" width="150" />
 
       <el-table-column
         align="center"
@@ -109,8 +133,18 @@
         prop="Type"
         width="150"
       />
-      <el-table-column align="center" label="判定区分" prop="QCStatus" />
-      <el-table-column align="center" label="货位类型" prop="CKMC" />
+      <el-table-column
+        v-if="false"
+        align="center"
+        label="判定区分"
+        prop="QCStatus"
+      />
+      <el-table-column
+        v-if="false"
+        align="center"
+        label="货位类型"
+        prop="CKMC"
+      />
       <el-table-column
         v-if="false"
         align="center"
@@ -123,15 +157,6 @@
         label="货载锁"
         prop="IsLocked"
       />
-
-      <!-- <el-table-column align="center" label="操作" width="255">
-        <template #default="{ row }">
-          <el-button type="text" @click="handleEdit(row)">强制完成</el-button>
-          <el-button type="text" @click="handleDelete(row)">取消任务</el-button>
-          <el-button type="text" @click="handleEdit(row)">编辑任务</el-button>
-          <el-button type="text" @click="handleDelete(row)">暂停任务</el-button>
-        </template>
-      </el-table-column> -->
       <template #empty>
         <el-image
           class="vab-data-empty"
@@ -166,6 +191,11 @@
         layout: 'total, sizes, prev, pager, next, jumper',
         total: 0,
         selectRows: '',
+        downloadLoading: false,
+        filename: '',
+        autoWidth: true,
+        bookType: 'xlsx',
+        options: ['xlsx', 'csv', 'txt'],
         queryForm: {
           pageNo: 1,
           pageSize: 10,
@@ -227,6 +257,49 @@
         this.list = list
         this.total = total
         this.listLoading = false
+      },
+      handleDownload() {
+        this.downloadLoading = true
+        import('@/utils/excel').then((excel) => {
+          const tHeader = [
+            'CreatedAt',
+            'CurrentLocation',
+            'MaterialCode',
+            'MaterialName',
+            'Number',
+            'BatchNo',
+            'ProduceDate',
+            'Type',
+          ]
+          const filterVal = [
+            '入库时间',
+            '当前位置',
+            '物料编码',
+            '物料名称',
+            '数量',
+            '批次',
+            '生产日期',
+            '物料类型',
+          ]
+          debugger
+          const list = this.list
+          const data = this.formatJson(filterVal, list)
+          excel.export_json_to_excel({
+            header: tHeader,
+            data,
+            filename: this.filename,
+            autoWidth: this.autoWidth,
+            bookType: this.bookType,
+          })
+          this.downloadLoading = false
+        })
+      },
+      formatJson(filterVal, jsonData) {
+        return jsonData.map((v) =>
+          filterVal.map((j) => {
+            return v[j]
+          })
+        )
       },
     },
   }

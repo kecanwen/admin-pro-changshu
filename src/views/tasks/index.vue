@@ -167,6 +167,7 @@
         }
       },
       handleCancel(row) {
+        debugger
         if (row.Id) {
           this.$baseConfirm('你确定要操作当前项吗?', null, async () => {
             const { msg } = await doCancel({

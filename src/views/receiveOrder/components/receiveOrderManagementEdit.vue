@@ -189,9 +189,8 @@
         },
         cargoOwnerOptions: [],
         documentTypeOptions: [
-          { label: '普通入库', value: 'PTRK' },
-          //{ label: '特殊入库', value: 'TSRK' },
-          //{ label: '空托盘入库', value: 'KTPRK' },
+          { label: '普通入库', value: 'YLRK' },
+          { label: '空托盘入库', value: 'KTPRK' },
         ],
         addForm: {
           materialsName: '',

@@ -27,7 +27,7 @@ export function doComplete(data) {
 export function doCancel(data) {
   return request({
     url: '/Tasks/DoCancel',
-    method: 'get',
+    method: 'post',
     data,
   })
 }

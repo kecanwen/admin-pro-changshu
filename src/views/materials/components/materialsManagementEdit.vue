@@ -39,6 +39,9 @@
       <el-form-item label="单个重量" prop="SingleWeight">
         <el-input v-model.trim="form.SingleWeight" />
       </el-form-item>
+      <el-form-item label="保质期预警" prop="Days">
+        <el-input v-model.trim="form.Days" />
+      </el-form-item>
       <el-form-item label="备注" prop="Comments">
         <el-input v-model.trim="form.Comments" />
       </el-form-item>
@@ -102,7 +105,7 @@
           if (valid) {
             const { msg } = await doEdit(this.form)
             this.$baseMessage(msg, 'success', 'vab-hey-message-success')
-            // this.$emit('fetch-data')
+            this.$emit('fetch-data')
             this.close()
           }
         })

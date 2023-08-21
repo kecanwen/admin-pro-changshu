@@ -1,23 +1,58 @@
 <template>
   <div class="receiveOrder-management-container">
     <vab-query-form>
-      <vab-query-form-left-panel>
-        <el-form :inline="true" :model="queryForm" @submit.native.prevent>
-          <el-form-item>
+      <vab-query-form-top-panel>
+        <el-form
+          ref="form"
+          :inline="true"
+          label-width="70px"
+          :model="queryForm"
+          @submit.native.prevent
+        >
+          <el-form-item label="物料">
             <el-input
-              v-model.trim="queryForm.MaterialCode"
+              v-model="queryForm.MaterialCode"
               clearable
-              placeholder="请输入物料编码"
+              placeholder="请输入物料编码或名称"
             />
           </el-form-item>
+          <el-form-item label="批次号">
+            <el-input
+              v-model="queryForm.BatchNo"
+              clearable
+              placeholder="请输入批次号"
+            />
+          </el-form-item>
+          <el-form-item label="生产日期">
+            <el-input
+              v-model="queryForm.ProduceDate"
+              clearable
+              placeholder="请输入生产日期"
+            />
+          </el-form-item>
+
           <el-form-item>
-            <el-button icon="el-icon-search" type="primary" @click="queryData">
+            <el-button
+              icon="el-icon-search"
+              native-type="submit"
+              type="primary"
+              @click="queryData"
+            >
               查询
             </el-button>
+            <!-- <el-button type="text" @click="handleFold">
+              <span v-if="fold">展开</span>
+              <span v-else>合并</span>
+              <vab-icon
+                class="vab-dropdown"
+                :class="{ 'vab-dropdown-active': fold }"
+                icon="arrow-up-s-line"
+              />
+            </el-button> -->
           </el-form-item>
         </el-form>
-      </vab-query-form-left-panel>
-      <vab-query-form-right-panel :span="10">
+      </vab-query-form-top-panel>
+      <vab-query-form-left-panel :span="24">
         <el-form :inline="true" :model="queryForm" @submit.native.prevent>
           <el-form-item>
             <el-select
@@ -44,7 +79,7 @@
             </el-button>
           </el-form-item>
         </el-form>
-      </vab-query-form-right-panel>
+      </vab-query-form-left-panel>
     </vab-query-form>
 
     <el-table
@@ -56,7 +91,7 @@
       <!-- <el-table-column align="center" show-overflow-tooltip type="selection" /> -->
       <!-- 嵌套表格 -->
       <el-table-column align="center" show-overflow-tooltip type="selection" />
-      <el-table-column type="expand">
+      <!-- <el-table-column type="expand">
         <template slot-scope="scope">
           <el-table
             v-loading="listLoading"
@@ -65,18 +100,7 @@
             style="width: 100%"
           >
             <el-table-column v-if="false" align="center" label="Id" prop="Id" />
-            <el-table-column
-              align="center"
-              label="物料编码"
-              prop="materialsCode"
-              width="160"
-            />
-            <el-table-column
-              align="center"
-              label="物料名称"
-              prop="materialsName"
-              width="160"
-            />
+
             <el-table-column align="center" label="批次号" prop="batchNo" />
             <el-table-column
               align="center"
@@ -101,10 +125,9 @@
             />
             <el-table-column align="center" label="单位" prop="smallestUnit" />
             <el-table-column align="center" label="物料类型" prop="type" />
-            <el-table-column align="center" label="数量" prop="number" />
           </el-table>
         </template>
-      </el-table-column>
+      </el-table-column> -->
 
       <el-table-column v-if="false" align="center" label="序号" width="55">
         <template #default="{ $index }">
@@ -113,28 +136,41 @@
       </el-table-column>
       <el-table-column v-if="false" align="center" label="Id" prop="Id" />
       <el-table-column align="center" label="任务状态 " prop="FeatureCode" />
-      <el-table-column align="center" label="入库时间 " prop="CreatedAt" />
-      <el-table-column align="center" label="当前位置" prop="CurrentLocation" />
-      <el-table-column align="center" label="托盘号" prop="ContainerCode" />
-      <el-table-column align="center" label="创建人 " prop="RegisteredBy" />
       <el-table-column
+        align="center"
+        label="入库时间 "
+        prop="CreatedAt"
+        width="160"
+      />
+      <el-table-column
+        align="center"
+        label="当前位置"
+        prop="CurrentLocation"
+        width="100"
+      />
+      <el-table-column
+        align="center"
+        label="物料编码"
+        prop="MaterialCode"
+        width="160"
+      />
+      <el-table-column
+        align="center"
+        label="物料名称"
+        prop="MaterialName"
+        width="160"
+      />
+      <el-table-column align="center" label="批次号" prop="BatchNo" />
+      <el-table-column align="center" label="生产日期" prop="ProduceDate" />
+      <el-table-column align="center" label="库存数量" prop="SumNumber" />
+      <el-table-column align="center" label="托盘号" prop="ContainerCode" />
+      <el-table-column align="center" label="入库人 " prop="RegisteredBy" />
+      <!-- <el-table-column
         align="center"
         label="创建时间"
         prop="CreatedAt"
         width="160"
-      />
-
-      <!-- <el-table-column
-        align="center"
-        label="操作"
-        show-overflow-tooltip
-        width="150"
-      >
-        <template #default="{ row }">
-          <el-button type="text" @click="handleEdit(row)">编辑</el-button>
-          <el-button type="text" @click="handleDelete(row)">删除</el-button>
-        </template>
-      </el-table-column> -->
+      /> -->
       <template #empty>
         <el-image
           class="vab-data-empty"

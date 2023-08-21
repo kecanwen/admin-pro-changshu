@@ -22,7 +22,7 @@
             <input
               ref="importFile"
               accept=".xlsx, .xls"
-              style="opacity: 0; width: 80px; height: 12px"
+              style="width: 40px; height: 12px; opacity: 0"
               type="file"
               @change="onImportExcel"
             />
@@ -85,6 +85,7 @@
       <el-table-column align="center" label="单层数量" prop="ShortName" />
       <el-table-column align="center" label="单层高度" prop="Barcode" />
       <el-table-column align="center" label="单个重量" prop="SingleWeight" />
+      <el-table-column align="center" label="保质期预警(天)" prop="Days" />
       <el-table-column
         align="center"
         label="创建时间"
@@ -156,15 +157,17 @@
         this.UploadExcelMethod(fd)
       },
       async UploadExcelMethod(fd) {
-        let { msg } = await UploadExcel(fd)
+        this.listLoading = true
+        const { msg } = await UploadExcel(fd)
         this.$baseMessage(msg, 'success', 'vab-hey-message-success')
+        this.listLoading = false
+        await this.fetchData()
       },
       setSelectRows(val) {
         this.selectRows = val
       },
       handleEdit(row) {
         if (row.Id) {
-          debugger
           this.$refs['edit'].showEdit(row)
         } else {
           this.$refs['edit'].showEdit()
