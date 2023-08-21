@@ -178,7 +178,7 @@
 </template>
 
 <script>
-  import { doDelete, getList } from '@/api/unitLoadsManagement'
+  import { doDelete, getExcelList, getList } from '@/api/unitLoadsManagement'
   import Edit from './components/tasksManagementEdit'
 
   export default {
@@ -261,7 +261,7 @@
       handleDownload() {
         this.downloadLoading = true
         import('@/utils/excel').then((excel) => {
-          const tHeader = [
+          const filterVal = [
             'CreatedAt',
             'CurrentLocation',
             'MaterialCode',
@@ -271,7 +271,7 @@
             'ProduceDate',
             'Type',
           ]
-          const filterVal = [
+          const tHeader = [
             '入库时间',
             '当前位置',
             '物料编码',
@@ -281,17 +281,20 @@
             '生产日期',
             '物料类型',
           ]
-          debugger
-          const list = this.list
-          const data = this.formatJson(filterVal, list)
-          excel.export_json_to_excel({
-            header: tHeader,
-            data,
-            filename: this.filename,
-            autoWidth: this.autoWidth,
-            bookType: this.bookType,
+          let that = this
+          getExcelList().then((res) => {
+            let list = res.data.list || []
+            that.list = list || []
+            const data = this.formatJson(filterVal, list)
+            excel.export_json_to_excel({
+              header: tHeader,
+              data,
+              filename: that.filename,
+              autoWidth: that.autoWidth,
+              bookType: that.bookType,
+            })
+            that.downloadLoading = false
           })
-          this.downloadLoading = false
         })
       },
       formatJson(filterVal, jsonData) {

@@ -75,13 +75,19 @@
           <el-button
             class="login-btn"
             :loading="loading"
+            style="margin-bottom: 10px"
             type="primary"
             @click="handleLogin"
           >
             {{ translateTitle('登录') }}
           </el-button>
           <router-link to="/register">
-            <div style="margin-top: 20px">{{ translateTitle('注册') }}</div>
+            <span>{{ translateTitle('注册') }}</span>
+          </router-link>
+          <router-link to="/fixupPassword">
+            <span style="margin-left: 20px">
+              {{ translateTitle('修改密码') }}
+            </span>
           </router-link>
         </el-form>
       </el-col>

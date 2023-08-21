@@ -8,6 +8,14 @@ export function getList(params) {
   })
 }
 
+export function getExcelList(params) {
+  return request({
+    url: '/UnitLoads/ExportGetUnitLoadsList',
+    method: 'get',
+    params: params,
+  })
+}
+
 export function doEdit(data) {
   return request({
     url: '/Tasks/AddOrUpdate',

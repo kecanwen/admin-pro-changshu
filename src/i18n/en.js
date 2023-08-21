@@ -87,6 +87,7 @@ export default {
     登录: 'Login',
     验证码: 'Verification code',
     注册: 'register',
+    修改密码: 'fixupPassword',
     主题配置: 'Theme',
     主题: 'Theme',
     常用设置: 'Common settings',
