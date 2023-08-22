@@ -12,57 +12,24 @@
           :rules="registerRules"
           size="mini"
         >
-          <div class="title-tips">{{ translateTitle('注册') }}</div>
-          <el-form-item prop="username">
-            <el-input
-              v-model.trim="form.username"
-              v-focus
-              auto-complete="off"
-              :placeholder="translateTitle('请输入用户名')"
-              type="text"
-            >
-              <template #prefix>
-                <vab-icon icon="user-line" />
-              </template>
-            </el-input>
-          </el-form-item>
-          <el-form-item prop="phone">
-            <el-input
-              v-model.trim="form.phone"
-              maxlength="11"
-              :placeholder="translateTitle('请输入手机号')"
-              show-word-limit
-              type="text"
-            >
-              <template #prefix>
-                <vab-icon icon="smartphone-line" />
-              </template>
-            </el-input>
-          </el-form-item>
-          <el-form-item prop="phoneCode" style="position: relative">
-            <el-input
-              v-model.trim="form.phoneCode"
-              :placeholder="translateTitle('请输入手机验证码')"
-              type="text"
-            >
-              <template #prefix>
-                <vab-icon icon="barcode-box-line" />
-              </template>
-            </el-input>
-            <el-button
-              class="phone-code"
-              :disabled="isGetPhone"
-              type="primary"
-              @click="getPhoneCode"
-            >
-              {{ phoneCode }}
-            </el-button>
-          </el-form-item>
+          <div class="title-tips">{{ translateTitle('修改密码') }}</div>
           <el-form-item prop="password">
             <el-input
               v-model.trim="form.password"
               autocomplete="new-password"
-              :placeholder="translateTitle('请输入密码')"
+              :placeholder="translateTitle('请输入新密码')"
+              type="password"
+            >
+              <template #prefix>
+                <vab-icon icon="lock-line" />
+              </template>
+            </el-input>
+          </el-form-item>
+          <el-form-item prop="password1">
+            <el-input
+              v-model.trim="form.password1"
+              autocomplete="new-password"
+              :placeholder="translateTitle('请确认密码')"
               type="password"
             >
               <template #prefix>
@@ -76,11 +43,11 @@
               type="primary"
               @click.native.prevent="handleRegister"
             >
-              {{ translateTitle('注册') }}
+              {{ translateTitle('确认') }}
             </el-button>
             <router-link to="/login">
               <div style="margin-top: 20px">
-                {{ translateTitle('登录') }}
+                {{ translateTitle('登陆') }}
               </div>
             </router-link>
           </el-form-item>
@@ -95,8 +62,8 @@
 
 <script>
   import { translateTitle } from '@/utils/i18n'
-  import { isPassword, isPhone } from '@/utils/validate'
-  import { register } from '@/api/user'
+  import { isPassword } from '@/utils/validate'
+  import { fixupPassword } from '@/api/user'
   import { mapActions } from 'vuex'
 
   export default {
@@ -113,13 +80,6 @@
       next()
     },
     data() {
-      const validateUsername = (rule, value, callback) => {
-        if ('' === value) {
-          callback(new Error(this.translateTitle('用户名不能为空')))
-        } else {
-          callback()
-        }
-      }
       const validatePassword = (rule, value, callback) => {
         if (!isPassword(value)) {
           callback(new Error(this.translateTitle('密码不能少于6位')))
@@ -127,13 +87,16 @@
           callback()
         }
       }
-      const validatePhone = (rule, value, callback) => {
-        if (!isPhone(value)) {
-          callback(new Error(this.translateTitle('请输入正确的手机号')))
+      const validatePassword1 = (rule, value, callback) => {
+        if (!isPassword(value)) {
+          callback(new Error(this.translateTitle('密码不能少于6位')))
+        } else if (this.form.password !== this.form.password1) {
+          callback(new Error(this.translateTitle('两次输入密码不一致')))
         } else {
           callback()
         }
       }
+
       return {
         isGetPhone: false,
         timertimer: null,
@@ -141,22 +104,6 @@
         showRegister: false,
         form: {},
         registerRules: {
-          username: [
-            {
-              required: true,
-              trigger: 'blur',
-              message: this.translateTitle('请输入用户名'),
-            },
-            { validator: validateUsername, trigger: 'blur' },
-          ],
-          phone: [
-            {
-              required: true,
-              trigger: 'blur',
-              message: this.translateTitle('请输入手机号'),
-            },
-            { validator: validatePhone, trigger: 'blur' },
-          ],
           password: [
             {
               required: true,
@@ -165,12 +112,13 @@
             },
             { validator: validatePassword, trigger: 'blur' },
           ],
-          phoneCode: [
+          password1: [
             {
               required: true,
               trigger: 'blur',
-              message: this.translateTitle('请输入手机验证码'),
+              message: this.translateTitle('请确认密码'),
             },
+            { validator: validatePassword1, trigger: 'blur' },
           ],
         },
         loading: false,
@@ -186,41 +134,11 @@
         setToken: 'user/setToken',
       }),
       translateTitle,
-      getPhoneCode() {
-        if (!isPhone(this.form.phone)) {
-          this.$refs['registerForm'].validateField('phone')
-          return
-        }
-        this.isGetPhone = true
-        let n = 60
-        this.timertimer = setInterval(() => {
-          if (n > 0) {
-            n--
-            this.phoneCode = this.translateTitle('获取验证码 ') + n + 's'
-          } else {
-            clearInterval(this.timertimer)
-            this.phoneCode = this.translateTitle('获取验证码')
-            this.timertimer = null
-            this.isGetPhone = false
-          }
-        }, 1000)
-      },
       handleRegister() {
         this.$refs['registerForm'].validate(async (valid) => {
           if (valid) {
-            const {
-              msg,
-              data: { token },
-            } = await register(this.form)
-            //this.$baseMessage(msg, 'success', 'vab-hey-message-success')
-            this.$baseConfirm(
-              `${msg}，点击确定模拟进入拥有【editor】角色的首页`,
-              null,
-              async () => {
-                await this.setToken(token)
-                await this.$router.push('/index')
-              }
-            )
+            const { msg } = await fixupPassword(this.form)
+            this.$message.info(msg)
           }
         })
       },

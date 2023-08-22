@@ -48,3 +48,13 @@ export function register(data) {
     data,
   })
 }
+
+export function fixupPassword(params) {
+  let token = getToken()
+  params = { userId: token, password: params.password }
+  return request({
+    url: 'Account/UpdatePassword',
+    method: 'get',
+    params,
+  })
+}

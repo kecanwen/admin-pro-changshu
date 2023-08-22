@@ -84,11 +84,6 @@
           <router-link to="/register">
             <span>{{ translateTitle('注册') }}</span>
           </router-link>
-          <router-link to="/fixupPassword">
-            <span style="margin-left: 20px">
-              {{ translateTitle('修改密码') }}
-            </span>
-          </router-link>
         </el-form>
       </el-col>
       <el-col :lg="1" :md="1" :sm="24" :xl="1" :xs="24">

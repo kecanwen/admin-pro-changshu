@@ -21,6 +21,10 @@
           <vab-icon icon="logout-circle-r-line" />
           {{ translateTitle('退出登录') }}
         </el-dropdown-item>
+        <el-dropdown-item command="fixup">
+          <vab-icon icon="el-icon-edit" />
+          {{ translateTitle('修改密码') }}
+        </el-dropdown-item>
       </el-dropdown-menu>
     </template>
   </el-dropdown>
@@ -57,6 +61,9 @@
           case 'personalCenter':
             this.personalCenter()
             break
+          case 'fixup':
+            this.fixup()
+            break
         }
       },
       handleVisibleChange(val) {
@@ -64,6 +71,9 @@
       },
       personalCenter() {
         this.$router.push('/setting/personalCenter')
+      },
+      fixup() {
+        this.$router.push('/fixupPassword')
       },
       async logout() {
         await this._logout()
