@@ -23,13 +23,6 @@ export const constantRoutes = [
     },
   },
   {
-    path: '/fixupPassword',
-    component: () => import('@/views/fixupPassword'),
-    meta: {
-      hidden: true,
-    },
-  },
-  {
     path: '/callback',
     component: () => import('@/views/callback'),
     meta: {
