@@ -1,38 +1,140 @@
+<!-- eslint-disable no-irregular-whitespace -->
 <template>
   <div class="tasks-management-container">
     <vab-query-form>
-      <!-- <vab-query-form-left-panel :span="12">
-        <el-button
-          icon="el-icon-plus"
-          type="primary"
-          @click="handleEdit($event)"
+      <vab-query-form-top-panel>
+        <el-form
+          ref="form"
+          :inline="true"
+          label-width="70px"
+          :model="queryForm"
+          @submit.native.prevent
         >
-          添加
-        </el-button>
-        <el-button
-          icon="el-icon-delete"
-          type="danger"
-          @click="handleDelete($event)"
-        >
-          批量删除
-        </el-button>
-      </vab-query-form-left-panel> -->
-      <vab-query-form-right-panel :span="12">
-        <el-form :inline="true" :model="queryForm" @submit.native.prevent>
-          <el-form-item>
+          <el-form-item label="物料编码">
             <el-input
-              v-model.trim="queryForm.materialsName"
+              v-model="queryForm.MaterialCode"
               clearable
-              placeholder="请输入仓库名"
+              placeholder="请输入物料编码"
+            />
+          </el-form-item>
+          <el-form-item label="物料名称">
+            <el-input
+              v-model="queryForm.ContainerCodeToMatch"
+              clearable
+              placeholder="请输入物料名称"
+            />
+          </el-form-item>
+          <el-form-item label="批次号">
+            <el-input
+              v-model="queryForm.BatchNo"
+              clearable
+              placeholder="请输入批次号"
+            />
+          </el-form-item>
+          <el-form-item label="生产日期">
+            <el-input
+              v-model="queryForm.ProduceDate"
+              clearable
+              placeholder="请输入生产日期"
+            />
+          </el-form-item>
+          <el-form-item v-show="!fold" label="托盘号">
+            <el-input
+              v-model="queryForm.ContainerCodeToMatch"
+              clearable
+              placeholder="请输入托盘号"
+            />
+          </el-form-item>
+          <el-form-item v-show="!fold" label="入库时间">
+            <el-date-picker
+              v-model="queryForm.CreateAt"
+              clearable
+              placeholder="入库时间"
+              type="datetime"
+            />
+            <span>　至　</span>
+            <el-date-picker
+              v-model="queryForm.EndAt"
+              clearable
+              placeholder="入库时间"
+              type="datetime"
+            />
+          </el-form-item>
+          <el-form-item v-show="!fold" label="物料类别" prop="MaterialType">
+            <el-select
+              v-model="queryForm.MaterialType"
+              clearable
+              placeholder="选择物料类别"
+            >
+              <el-option
+                v-for="dict in materialsTypeList"
+                :key="dict.Code"
+                :label="dict.Name"
+                :value="dict.Name"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item v-show="!fold" label="起点位置">
+            <el-input
+              v-model="queryForm.FromLocationUserCodeToMatch"
+              clearable
+              placeholder="请输入起点位置"
+            />
+          </el-form-item>
+          <el-form-item v-show="!fold" label="终点位置">
+            <el-input
+              v-model="queryForm.ToLocationUserCodeToMatch"
+              clearable
+              placeholder="请输入订单号"
             />
           </el-form-item>
           <el-form-item>
-            <el-button icon="el-icon-search" type="primary" @click="queryData">
+            <el-button
+              icon="el-icon-search"
+              native-type="submit"
+              type="primary"
+              @click="queryData"
+            >
               查询
+            </el-button>
+            <el-button type="text" @click="handleFold">
+              <span v-if="fold">展开</span>
+              <span v-else>合并</span>
+              <vab-icon
+                class="vab-dropdown"
+                :class="{ 'vab-dropdown-active': fold }"
+                icon="arrow-up-s-line"
+              />
             </el-button>
           </el-form-item>
         </el-form>
-      </vab-query-form-right-panel>
+      </vab-query-form-top-panel>
+      <vab-query-form-left-panel>
+        <el-popover popper-class="custom-table-checkbox" trigger="hover">
+          <el-checkbox-group v-model="checkList">
+            <vab-draggable v-bind="dragOptions" :list="columns">
+              <div v-for="(item, index) in columns" :key="item + index">
+                <vab-icon icon="drag-drop-line" />
+                <el-checkbox
+                  :disabled="item.disableCheck === true"
+                  :label="item.label"
+                >
+                  {{ item.label }}
+                </el-checkbox>
+              </div>
+            </vab-draggable>
+          </el-checkbox-group>
+          <template #reference>
+            <el-button
+              icon="el-icon-setting"
+              style="margin: 0 1000px 10px 0 !important"
+              type="primary"
+            >
+              可拖拽列设置
+            </el-button>
+          </template>
+        </el-popover>
+      </vab-query-form-left-panel>
     </vab-query-form>
 
     <el-table
@@ -41,7 +143,6 @@
       :data="list"
       @selection-change="setSelectRows"
     >
-      <el-table-column align="center" show-overflow-tooltip type="selection" />
       <el-table-column v-if="false" align="center" label="序号" width="55">
         <template #default="{ $index }">
           {{ $index + 1 }}
@@ -49,44 +150,14 @@
       </el-table-column>
       <el-table-column v-if="false" align="center" label="Id" prop="Id" />
       <el-table-column
+        v-for="(item, index) in finallyColumns"
+        :key="index"
         align="center"
-        label="任务号 "
-        prop="TaskCode"
-        width="130"
+        :label="item.label"
+        :prop="item.prop"
+        :sortable="item.sortable"
+        :width="item.width"
       />
-      <el-table-column align="center" label="容器编码" prop="ContainerCode" />
-      <el-table-column
-        align="center"
-        label="起点 "
-        prop="FromLocation"
-        width="110"
-      />
-      <el-table-column
-        align="center"
-        label="终点"
-        prop="ToLocation"
-        width="110"
-      />
-      <el-table-column
-        align="center"
-        label="优先级"
-        prop="Priority"
-        width="110"
-      />
-      <el-table-column align="center" label="巷道" prop="LanewayName" />
-      <el-table-column
-        align="center"
-        label="创建时间"
-        prop="CreatedAt"
-        width="160"
-      />
-      <!-- <el-table-column
-        align="center"
-        label="下发时间"
-        prop="SentToWcsAt"
-        width="160"
-      /> -->
-      <el-table-column align="center" label="任务类型" prop="TaskType" />
 
       <el-table-column align="center" label="操作" width="160">
         <template #default="{ row }">
@@ -119,17 +190,129 @@
 </template>
 
 <script>
-  import { doComplete, doCancel, getList } from '@/api/tasksManagement'
+  import {
+    doComplete,
+    doCancel,
+    getList,
+    getMaterialsTypeOptionApi,
+  } from '@/api/tasksManagement'
   import Edit from './components/tasksManagementEdit'
+  import VabDraggable from 'vuedraggable'
 
   export default {
     name: 'TasksManagement',
-    components: { Edit },
+    components: { Edit, VabDraggable },
     data() {
       return {
+        fold: true,
+        materialsTypeList: [],
+        height: this.$baseTableHeight(3) - 30,
         list: [],
         listLoading: true,
         layout: 'total, sizes, prev, pager, next, jumper',
+        checkList: [
+          '任务号',
+          '容器编码',
+          '物料编码',
+          '物料名称',
+          '数量',
+          '批次号',
+          '生产日期',
+          '物料类型',
+          '起点',
+          '终点',
+          '优先级',
+          '巷道',
+          '创建时间',
+          '任务类型',
+        ],
+        columns: [
+          {
+            label: '任务号',
+            prop: 'TaskCode',
+            width: '130',
+            sortable: true,
+            disableCheck: true,
+          },
+          {
+            label: '容器编码',
+            width: '150',
+            prop: 'ContainerCode',
+            sortable: true,
+          },
+          {
+            label: '物料编码',
+            width: '160',
+            prop: 'MaterialCode',
+            sortable: true,
+          },
+          {
+            label: '物料名称',
+            width: '160',
+            prop: 'MaterialName',
+            sortable: true,
+          },
+          {
+            label: '数量',
+            width: '100',
+            prop: 'SumNumber',
+            sortable: true,
+          },
+          {
+            label: '批次号',
+            width: '120',
+            prop: 'BatchNo',
+            sortable: true,
+          },
+          {
+            label: '生产日期',
+            width: '150',
+            prop: 'ProduceDate',
+            sortable: true,
+          },
+          {
+            label: '物料类型',
+            width: '150',
+            prop: 'Type',
+            sortable: true,
+          },
+          {
+            label: '起点',
+            width: '110',
+            prop: 'FromLocation',
+            sortable: true,
+          },
+          {
+            label: '终点',
+            width: '110',
+            prop: 'ToLocation',
+            sortable: true,
+          },
+          {
+            label: '优先级',
+            width: '110',
+            prop: 'Priority',
+            sortable: true,
+          },
+          {
+            label: '巷道',
+            width: '150',
+            prop: 'LanewayName',
+            sortable: true,
+          },
+          {
+            label: '创建时间',
+            width: '160',
+            prop: 'CreatedAt',
+            sortable: true,
+          },
+          {
+            label: '任务类型',
+            width: '150',
+            prop: 'TaskType',
+            sortable: true,
+          },
+        ],
         total: 0,
         selectRows: '',
         queryForm: {
@@ -139,12 +322,34 @@
         },
       }
     },
+    computed: {
+      dragOptions() {
+        return {
+          animation: 600,
+          group: 'description',
+        }
+      },
+      finallyColumns() {
+        return this.columns.filter((item) =>
+          this.checkList.includes(item.label)
+        )
+      },
+    },
     created() {
       this.fetchData()
+      this.getMaterialsTypeOptionMethod()
     },
     methods: {
       setSelectRows(val) {
         this.selectRows = val
+      },
+      handleFold() {
+        this.fold = !this.fold
+        this.handleHeight()
+      },
+      handleHeight() {
+        if (this.fold) this.height = this.$baseTableHeight(2) - 47
+        else this.height = this.$baseTableHeight(3) - 30
       },
       handleEdit(row) {
         if (row.Id) {
@@ -167,7 +372,6 @@
         }
       },
       handleCancel(row) {
-        debugger
         if (row.Id) {
           this.$baseConfirm('你确定要操作当前项吗?', null, async () => {
             const { msg } = await doCancel({
@@ -199,6 +403,14 @@
         this.list = list
         this.total = total
         this.listLoading = false
+      },
+      async getMaterialsTypeOptionMethod() {
+        const res = await getMaterialsTypeOptionApi()
+        if (res.code == 200) {
+          this.materialsTypeList = res.data.list
+        } else {
+          this.materialsTypeList = []
+        }
       },
     },
   }

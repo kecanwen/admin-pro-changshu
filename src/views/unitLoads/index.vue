@@ -1,3 +1,4 @@
+<!-- eslint-disable no-irregular-whitespace -->
 <template>
   <div class="unitLoads-management-container">
     <vab-query-form>
@@ -9,11 +10,18 @@
           :model="queryForm"
           @submit.native.prevent
         >
-          <el-form-item label="物料">
+          <el-form-item label="物料编码">
             <el-input
               v-model="queryForm.MaterialCode"
               clearable
-              placeholder="请输入物料编码或名称"
+              placeholder="请输入物料编码"
+            />
+          </el-form-item>
+          <el-form-item label="物料名称">
+            <el-input
+              v-model="queryForm.ContainerCodeToMatch"
+              clearable
+              placeholder="请输入物料名称"
             />
           </el-form-item>
           <el-form-item label="批次号">
@@ -30,7 +38,49 @@
               placeholder="请输入生产日期"
             />
           </el-form-item>
-
+          <el-form-item v-show="!fold" label="托盘号">
+            <el-input
+              v-model="queryForm.ContainerCode"
+              clearable
+              placeholder="请输入托盘号"
+            />
+          </el-form-item>
+          <el-form-item v-show="!fold" label="入库时间">
+            <el-date-picker
+              v-model="queryForm.CreateAt"
+              clearable
+              placeholder="入库时间"
+              type="datetime"
+            />
+            <span>　至　</span>
+            <el-date-picker
+              v-model="queryForm.EndAt"
+              clearable
+              placeholder="入库时间"
+              type="datetime"
+            />
+          </el-form-item>
+          <el-form-item v-show="!fold" label="物料类别" prop="MaterialType">
+            <el-select
+              v-model="queryForm.MaterialType"
+              clearable
+              placeholder="选择物料类别"
+            >
+              <el-option
+                v-for="dict in materialsTypeList"
+                :key="dict.Code"
+                :label="dict.Name"
+                :value="dict.Name"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item v-show="!fold" label="位置">
+            <el-input
+              v-model="queryForm.CurrentLocationToMatch"
+              clearable
+              placeholder="请输入位置"
+            />
+          </el-form-item>
           <el-form-item>
             <el-button
               icon="el-icon-search"
@@ -45,7 +95,7 @@
                 导出 Excel
               </el-button>
             </el-form-item>
-            <!-- <el-button type="text" @click="handleFold">
+            <el-button type="text" @click="handleFold">
               <span v-if="fold">展开</span>
               <span v-else>合并</span>
               <vab-icon
@@ -53,10 +103,37 @@
                 :class="{ 'vab-dropdown-active': fold }"
                 icon="arrow-up-s-line"
               />
-            </el-button> -->
+            </el-button>
           </el-form-item>
         </el-form>
       </vab-query-form-top-panel>
+
+      <vab-query-form-left-panel>
+        <el-popover popper-class="custom-table-checkbox" trigger="hover">
+          <el-checkbox-group v-model="checkList">
+            <vab-draggable v-bind="dragOptions" :list="columns">
+              <div v-for="(item, index) in columns" :key="item + index">
+                <vab-icon icon="drag-drop-line" />
+                <el-checkbox
+                  :disabled="item.disableCheck === true"
+                  :label="item.label"
+                >
+                  {{ item.label }}
+                </el-checkbox>
+              </div>
+            </vab-draggable>
+          </el-checkbox-group>
+          <template #reference>
+            <el-button
+              icon="el-icon-setting"
+              style="margin: 0 1000px 10px 0 !important"
+              type="primary"
+            >
+              可拖拽列设置
+            </el-button>
+          </template>
+        </el-popover>
+      </vab-query-form-left-panel>
     </vab-query-form>
 
     <el-table v-loading="listLoading" border :data="list">
@@ -67,95 +144,13 @@
       </el-table-column>
       <el-table-column v-if="false" align="center" label="Id" prop="Id" />
       <el-table-column
+        v-for="(item, index) in finallyColumns"
+        :key="index"
         align="center"
-        label="入库时间"
-        prop="CreatedAt"
-        width="160"
-      />
-      <el-table-column
-        align="center"
-        label="当前位置"
-        prop="CurrentLocation"
-        width="150"
-      />
-
-      <el-table-column
-        v-if="false"
-        align="center"
-        label="托盘类型"
-        prop="type"
-        width="110"
-      />
-      <el-table-column
-        align="center"
-        label="物料编码"
-        prop="MaterialCode"
-        width="160"
-      />
-      <el-table-column
-        align="center"
-        label="物料名称"
-        prop="MaterialName"
-        width="160"
-      />
-      <el-table-column align="center" label="数量" prop="Number" />
-      <el-table-column align="center" label="批次" prop="BatchNo" width="150" />
-      <el-table-column
-        align="center"
-        label="生产日期"
-        prop="ProduceDate"
-        width="150"
-      />
-      <el-table-column
-        align="center"
-        label="容器编码 "
-        prop="ContainerCode"
-        width="110"
-      />
-      <el-table-column
-        align="center"
-        label="单包重量"
-        prop="SingleWeight"
-        width="150"
-      />
-
-      <el-table-column
-        align="center"
-        label="有效期"
-        prop="EffectiveDate"
-        width="150"
-      />
-      <el-table-column align="center" label="尺寸" prop="ChiCun" width="150" />
-
-      <el-table-column
-        align="center"
-        label="物料类型"
-        prop="Type"
-        width="150"
-      />
-      <el-table-column
-        v-if="false"
-        align="center"
-        label="判定区分"
-        prop="QCStatus"
-      />
-      <el-table-column
-        v-if="false"
-        align="center"
-        label="货位类型"
-        prop="CKMC"
-      />
-      <el-table-column
-        v-if="false"
-        align="center"
-        label="任务锁"
-        prop="IsSealed"
-      />
-      <el-table-column
-        v-if="false"
-        align="center"
-        label="货载锁"
-        prop="IsLocked"
+        :label="item.label"
+        :prop="item.prop"
+        :sortable="item.sortable"
+        :width="item.width"
       />
       <template #empty>
         <el-image
@@ -178,21 +173,119 @@
 </template>
 
 <script>
-  import { doDelete, getExcelList, getList } from '@/api/unitLoadsManagement'
+  import {
+    doDelete,
+    getExcelList,
+    getList,
+    getMaterialsTypeOptionApi,
+  } from '@/api/unitLoadsManagement'
   import Edit from './components/tasksManagementEdit'
+  import VabDraggable from 'vuedraggable'
 
   export default {
     name: 'UnitLoadsManagement',
-    components: { Edit },
+    components: { Edit, VabDraggable },
     data() {
       return {
         list: [],
+        materialsTypeList: [],
+        fold: true,
+        height: this.$baseTableHeight(3) - 30,
         listLoading: true,
         layout: 'total, sizes, prev, pager, next, jumper',
+        checkList: [
+          '入库时间',
+          '当前位置',
+          '物料编码',
+          '物料名称',
+          '数量',
+          '批次',
+          '生产日期',
+          '容器编码',
+          '单包重量',
+          '有效期',
+          '尺寸',
+          '物料类型',
+        ],
+        columns: [
+          {
+            label: '入库时间',
+            prop: 'CreatedAt',
+            width: '160',
+            sortable: true,
+            disableCheck: true,
+          },
+          {
+            label: '当前位置',
+            width: '150',
+            prop: 'CurrentLocation',
+            sortable: true,
+          },
+          {
+            label: '物料编码',
+            width: '160',
+            prop: 'MaterialCode',
+            sortable: true,
+          },
+          {
+            label: '物料名称',
+            width: '160',
+            prop: 'MaterialName',
+            sortable: true,
+          },
+          {
+            label: '数量',
+            width: '100',
+            prop: 'Number',
+            sortable: true,
+          },
+          {
+            label: '批次',
+            width: '120',
+            prop: 'BatchNo',
+            sortable: true,
+          },
+          {
+            label: '生产日期',
+            width: '150',
+            prop: 'ProduceDate',
+            sortable: true,
+          },
+          {
+            label: '容器编码',
+            width: '110',
+            prop: 'ContainerCode',
+            sortable: true,
+          },
+          {
+            label: '单包重量',
+            width: '150',
+            prop: 'SingleWeight',
+            sortable: true,
+          },
+          {
+            label: '有效期',
+            width: '150',
+            prop: 'EffectiveDate',
+            sortable: true,
+          },
+          {
+            label: '尺寸',
+            width: '150',
+            prop: 'ChiCun',
+            sortable: true,
+          },
+          {
+            label: '物料类型',
+            width: '150',
+            prop: 'Type',
+            sortable: true,
+          },
+        ],
         total: 0,
         selectRows: '',
         downloadLoading: false,
-        filename: '',
+        filename: '实时库存表',
         autoWidth: true,
         bookType: 'xlsx',
         options: ['xlsx', 'csv', 'txt'],
@@ -203,12 +296,34 @@
         },
       }
     },
+    computed: {
+      dragOptions() {
+        return {
+          animation: 600,
+          group: 'description',
+        }
+      },
+      finallyColumns() {
+        return this.columns.filter((item) =>
+          this.checkList.includes(item.label)
+        )
+      },
+    },
     created() {
       this.fetchData()
+      this.getMaterialsTypeOptionMethod()
     },
     methods: {
       setSelectRows(val) {
         this.selectRows = val
+      },
+      handleFold() {
+        this.fold = !this.fold
+        this.handleHeight()
+      },
+      handleHeight() {
+        if (this.fold) this.height = this.$baseTableHeight(2) - 47
+        else this.height = this.$baseTableHeight(3) - 30
       },
       handleEdit(row) {
         if (row.Id) {
@@ -282,7 +397,7 @@
             '物料类型',
           ]
           let that = this
-          getExcelList().then((res) => {
+          getExcelList(this.queryForm).then((res) => {
             let list = res.data.list || []
             that.list = list || []
             const data = this.formatJson(filterVal, list)
@@ -303,6 +418,14 @@
             return v[j]
           })
         )
+      },
+      async getMaterialsTypeOptionMethod() {
+        const res = await getMaterialsTypeOptionApi()
+        if (res.code == 200) {
+          this.materialsTypeList = res.data.list
+        } else {
+          this.materialsTypeList = []
+        }
       },
     },
   }

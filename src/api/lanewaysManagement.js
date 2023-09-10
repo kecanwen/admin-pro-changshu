@@ -10,7 +10,6 @@ export function getList(params) {
 
 //标记/清除设备故障
 export function doEdit(data) {
-  debugger
   return request({
     url: '/Laneways/DisableOrEnable',
     method: 'post',

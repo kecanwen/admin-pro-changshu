@@ -63,7 +63,6 @@
       save() {
         this.$refs['form'].validate(async (valid) => {
           if (valid) {
-            debugger
             const { msg } = await doEdit(this.form)
             this.$baseMessage(msg, 'success', 'vab-hey-message-success')
             this.$emit('fetch-data')

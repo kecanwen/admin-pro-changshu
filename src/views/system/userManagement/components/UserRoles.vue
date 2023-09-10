@@ -77,7 +77,6 @@
         this.$refs['form'].validate(async (valid) => {
           if (valid) {
             let para = { roleId: this.form.RoleId, userId: this.form.Id }
-            debugger
             const { msg } = await setRole(para)
             this.$baseMessage(msg, 'success', 'vab-hey-message-success')
             this.$emit('fetch-data')

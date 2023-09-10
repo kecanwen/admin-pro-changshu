@@ -27,6 +27,13 @@
             />
           </el-form-item>
           <el-form-item>
+            <el-input
+              v-model.trim="queryForm.materialsName"
+              clearable
+              placeholder="请输入托盘号"
+            />
+          </el-form-item>
+          <el-form-item>
             <el-button icon="el-icon-search" type="primary" @click="queryData">
               查询
             </el-button>
@@ -95,9 +102,9 @@
       <el-table-column v-if="false" align="center" label="Id" prop="Id" />
       <el-table-column align="center" label="入库单号 " prop="Code" />
       <el-table-column align="center" label="入库类型" prop="ReceiveType" />
+      <el-table-column align="center" label="入库口" prop="LocationCode" />
       <el-table-column align="center" label="状态" prop="Status" />
       <el-table-column align="center" label="托盘号" prop="PalletNo" />
-      <!-- <el-table-column align="center" label="供应商" prop="Supplier" /> -->
       <el-table-column align="center" label="创建人 " prop="CreatedBy" />
       <el-table-column
         align="center"

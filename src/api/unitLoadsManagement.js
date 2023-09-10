@@ -15,7 +15,13 @@ export function getExcelList(params) {
     params: params,
   })
 }
-
+export function getMaterialsTypeOptionApi(params) {
+  return request({
+    url: '/ContainerType/GetMaterialsTypeOption',
+    method: 'get',
+    params,
+  })
+}
 export function doEdit(data) {
   return request({
     url: '/Tasks/AddOrUpdate',
@@ -29,6 +35,14 @@ export function doDelete(data) {
     url: '/Tasks/Delete',
     method: 'post',
     data,
+  })
+}
+//锁定批次 updateBatchNo
+export function updateBatchNo(params) {
+  return request({
+    url: '/UnitLoads/updateBatchNo',
+    method: 'get',
+    params,
   })
 }
 
@@ -49,3 +63,12 @@ export function updateupForbidOutbound(data) {
     data,
   })
 }
+
+//导出
+// export function getExcelList(params) {
+//   return request({
+//     url: '/UnitLoads/ExportGetUnitLoadsList',
+//     method: 'get',
+//     params: params,
+//   })
+// }

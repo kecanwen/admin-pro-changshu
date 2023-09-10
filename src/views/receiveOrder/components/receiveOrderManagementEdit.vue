@@ -27,13 +27,13 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="供应商" prop="Supplier">
-        <el-select v-model="form.Supplier" placeholder="请选择">
+      <el-form-item label="入库口" prop="LocationCode">
+        <el-select v-model="form.LocationCode" placeholder="请选择">
           <el-option
-            v-for="dict in cargoOwnerOptions"
-            :key="dict.Code"
-            :label="dict.Name"
-            :value="dict.Name"
+            v-for="item in locationCodeOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
           />
         </el-select>
       </el-form-item>
@@ -192,6 +192,10 @@
           { label: '普通入库', value: 'YLRK' },
           { label: '空托盘入库', value: 'KTPRK' },
         ],
+        locationCodeOptions: [
+          { label: '物流口D', value: '00-001-1003' },
+          { label: '物流口F1', value: '00-001-1004' },
+        ],
         addForm: {
           materialsName: '',
           materialsCode: '',
@@ -213,9 +217,9 @@
           ReceiveType: [
             { required: true, trigger: 'blur', message: '请选择单据类型' },
           ],
-          // Supplier: [
-          //   { required: true, trigger: 'blur', message: '请选择供应商' },
-          // ],
+          LocationCode: [
+            { required: true, trigger: 'blur', message: '请选择入库口' },
+          ],
         },
         title: '',
         dialogFormVisible: false,

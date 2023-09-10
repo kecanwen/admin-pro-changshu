@@ -72,6 +72,7 @@
       <el-table-column v-if="false" align="center" label="Id" prop="Id" />
       <el-table-column align="center" label="出库单号 " prop="Code" />
       <el-table-column align="center" label="出库类型" prop="WaveType" />
+      <el-table-column align="center" label="出库口" prop="Destination" />
       <el-table-column align="center" label="状态" prop="Status" />
       <el-table-column align="center" label="创建人 " prop="CreatedBy" />
       <el-table-column align="center" label="创建时间" prop="CreatedAt" />

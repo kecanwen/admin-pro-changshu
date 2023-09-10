@@ -108,6 +108,7 @@
       return {
         active: false,
         dialogVisible: false,
+
         form: {},
         registerRules: {
           password: [
@@ -140,7 +141,9 @@
       ...mapActions({
         _logout: 'user/logout',
       }),
-      handleClose() {},
+      handleClose() {
+        this.dialogVisible = false
+      },
       handleRegister() {
         this.$refs['registerForm'].validate(async (valid) => {
           if (valid) {
