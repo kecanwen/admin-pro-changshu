@@ -93,9 +93,13 @@
             :fetch-suggestions="querySearch"
             placeholder="请输入内容"
             style="width: 360px"
-            value-key="materialsName"
+            value-key="materialsCode"
             @select="handleSelect"
-          />
+          >
+            <template slot-scope="{ item }">
+              {{ item.materialsCode }} - {{ item.materialsName }}
+            </template>
+          </el-autocomplete>
           <span>
             <span style="padding: 0 20px">
               <b>库存总数</b>
